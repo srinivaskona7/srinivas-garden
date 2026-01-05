@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Plan and organize your gardens with Sri's Garden">
+    <title>
+        <%= title %> | Sri's Garden
+    </title>
+  <link rel="icon" type="image/png" href="/images/favicon.png">
+  <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="nav-logo">
+                <span class="logo-icon">🌿</span>
+                <span class="logo-text">Sri's Garden</span>
+            </a>
+            <ul class="nav-menu">
+                <li><a href="/changelog" class="nav-link">📜 Changelog</a></li>
+                <li><a href="/" class="nav-link">Home</a></li>
+                <li><a href="/plants" class="nav-link">My Plants</a></li>
+                <li><a href="/garden" class="nav-link active">Gardens</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="page-content">
+        <div class="container">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">🏡 My Gardens</h1>
+                    <p class="page-subtitle">Organize and plan your beautiful gardens</p>
+                </div>
+                <button class="btn btn-primary" onclick="showAddGardenModal()">
+                    <span>➕</span> Create Garden
+                </button>
+            </div>
+
+            <!-- Gardens Grid -->
+            <div class="gardens-grid" id="gardensGrid">
+                <% if (gardens && gardens.length> 0) { %>
+                    <% gardens.forEach(garden=> { %>
+                        <div class="garden-card" data-id="<%= garden._id %>">
+                            <div class="garden-card-header">
+                                <div class="garden-icon">
+                                    <% if (garden.gardenType==='flower' ) { %>🌸
+                                        <% } else if (garden.gardenType==='vegetable' ) { %>🥕
+                                            <% } else if (garden.gardenType==='herb' ) { %>🌿
+                                                <% } else if (garden.gardenType==='succulent' ) { %>🌵
+                                                    <% } else if (garden.gardenType==='tropical' ) { %>🌴
+                                                        <% } else { %>🏡<% } %>
+                                </div>
+                                <div class="garden-badge badge-<%= garden.size %>">
+                                    <%= garden.size.charAt(0).toUpperCase() + garden.size.slice(1) %>
+                                </div>
+                            </div>
+                            <div class="garden-card-body">
+                                <h3 class="garden-name">
+                                    <%= garden.name %>
+                                </h3>
+                                <p class="garden-description">
+                                    <%= garden.description || 'No description' %>
+                                </p>
+                                <div class="garden-meta">
+                                    <div class="meta-item">
+                                        <span class="meta-icon">📍</span>
+                                        <span>
+                                            <%= garden.location.replace('-', ' ' ).replace(/\b\w/g, l=> l.toUpperCase())
+                                                %>
+                                        </span>
+                                    </div>
+                                    <div class="meta-item">
+                                        <span class="meta-icon">🌱</span>
+                                        <span>
+                                            <%= garden.plants ? garden.plants.length : 0 %> Plants
+                                        </span>
+                                    </div>
+                                    <div class="meta-item">
+                                        <span class="meta-icon">🌍</span>
+                                        <span>
+                                            <%= garden.gardenType.charAt(0).toUpperCase() + garden.gardenType.slice(1)
+                                                %>
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <% if (garden.plants && garden.plants.length> 0) { %>
+                                    <div class="garden-plants-preview">
+                                        <h4>Plants in this garden:</h4>
+                                        <div class="plants-list">
+                                            <% garden.plants.slice(0, 3).forEach(plant=> { %>
+                                                <span class="plant-tag">🌱 <%= plant.name %></span>
+                                                <% }) %>
+                                                    <% if (garden.plants.length> 3) { %>
+                                                        <span class="plant-tag more">+<%= garden.plants.length - 3 %>
+                                                                more</span>
+                                                        <% } %>
+                                        </div>
+                                    </div>
+                                    <% } %>
+                            </div>
+                            <div class="garden-card-actions">
+                                <button class="btn btn-sm btn-secondary"
+                                    onclick="showAddPlantToGardenModal('<%= garden._id %>')">
+                                    ➕ Add Plants
+                                </button>
+                                <button class="btn-icon" onclick="editGarden('<%= garden._id %>')" title="Edit garden">
+                                    ✏️
+                                </button>
+                                <button class="btn-icon btn-danger" onclick="deleteGarden('<%= garden._id %>')"
+                                    title="Delete garden">
+                                    🗑️
+                                </button>
+                            </div>
+                        </div>
+                        <% }) %>
+                            <% } else { %>
+                                <div class="empty-state">
+                                    <div class="empty-icon">🏡</div>
+                                    <h3>No gardens yet</h3>
+                                    <p>Create your first garden to start organizing your plants!</p>
+                                    <button class="btn btn-primary" onclick="showAddGardenModal()">
+                                        Create Your First Garden
+                                    </button>
+                                </div>
+                                <% } %>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add/Edit Garden Modal -->
+    <div id="addGardenModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="gardenModalTitle">🏡 Create New Garden</h2>
+                <button class="modal-close" onclick="closeModal('addGardenModal')">&times;</button>
+            </div>
+            <form id="addGardenForm" onsubmit="handleAddGarden(event)">
+                <input type="hidden" id="editGardenId" name="editId">
+                <div class="form-group">
+                    <label for="gardenName">Garden Name *</label>
+                    <input type="text" id="gardenName" name="name" required placeholder="e.g., Backyard Paradise">
+                </div>
+                <div class="form-group">
+                    <label for="gardenDescription">Description</label>
+                    <textarea id="gardenDescription" name="description" rows="2"
+                        placeholder="Describe your garden..."></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="gardenLocation">Location</label>
+                        <select id="gardenLocation" name="location">
+                            <option value="front-yard">Front Yard</option>
+                            <option value="backyard" selected>Backyard</option>
+                            <option value="balcony">Balcony</option>
+                            <option value="indoor">Indoor</option>
+                            <option value="rooftop">Rooftop</option>
+                            <option value="greenhouse">Greenhouse</option>
+                            <option value="community">Community</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="gardenType">Garden Type</label>
+                        <select id="gardenType" name="gardenType">
+                            <option value="flower">Flower Garden</option>
+                            <option value="vegetable">Vegetable Garden</option>
+                            <option value="herb">Herb Garden</option>
+                            <option value="succulent">Succulent Garden</option>
+                            <option value="tropical">Tropical Garden</option>
+                            <option value="mixed" selected>Mixed Garden</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="gardenSize">Size</label>
+                        <select id="gardenSize" name="size">
+                            <option value="small">Small</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="large">Large</option>
+                            <option value="extra-large">Extra Large</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="climate">Climate</label>
+                        <select id="climate" name="climate">
+                            <option value="tropical">Tropical</option>
+                            <option value="subtropical">Subtropical</option>
+                            <option value="temperate" selected>Temperate</option>
+                            <option value="mediterranean">Mediterranean</option>
+                            <option value="arid">Arid</option>
+                            <option value="continental">Continental</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="soilType">Soil Type</label>
+                    <select id="soilType" name="soilType">
+                        <option value="clay">Clay</option>
+                        <option value="sandy">Sandy</option>
+                        <option value="loamy" selected>Loamy</option>
+                        <option value="peaty">Peaty</option>
+                        <option value="chalky">Chalky</option>
+                        <option value="silty">Silty</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="gardenNotes">Notes</label>
+                    <textarea id="gardenNotes" name="notes" rows="3"
+                        placeholder="Any special notes about this garden..."></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary"
+                        onclick="closeModal('addGardenModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="gardenSubmitBtn">Create Garden</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Plant to Garden Modal -->
+    <div id="addPlantToGardenModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>➕ Add Plants to Garden</h2>
+                <button class="modal-close" onclick="closeModal('addPlantToGardenModal')">&times;</button>
+            </div>
+            <form id="addPlantToGardenForm" onsubmit="handleAddPlantToGarden(event)">
+                <input type="hidden" id="targetGardenId">
+                <div class="form-group">
+                    <label>Select Plants to Add</label>
+                    <div class="plants-checkbox-list" id="plantsCheckboxList">
+                        <% if (plants && plants.length> 0) { %>
+                            <% plants.forEach(plant=> { %>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" name="plants" value="<%= plant._id %>">
+                                    <span class="checkbox-label">
+                                        🌱 <%= plant.name %>
+                                            <small>(<%= plant.species || 'Unknown species' %>)</small>
+                                    </span>
+                                </label>
+                                <% }) %>
+                                    <% } else { %>
+                                        <p class="no-plants-message">No plants available. <a href="/plants">Add some
+                                                plants first!</a></p>
+                                        <% } %>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary"
+                        onclick="closeModal('addPlantToGardenModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add to Garden</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Sri's Garden. Made with 💚 for plant lovers.</p>
+        </div>
+    </footer>
+
+    <script src="/js/app.js"></script>
+</body>
+
+</html>

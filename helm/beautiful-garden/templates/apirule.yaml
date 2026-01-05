@@ -1,0 +1,25 @@
+{{- if .Values.apirule.enabled -}}
+apiVersion: gateway.kyma-project.io/v2
+kind: APIRule
+metadata:
+  name: {{ include "beautiful-garden.fullname" . }}
+  labels:
+    {{- include "beautiful-garden.labels" . | nindent 4 }}
+spec:
+  hosts:
+    - {{ .Values.apirule.host | quote }}
+  gateway: {{ .Values.apirule.gateway }}
+  service:
+    name: {{ include "beautiful-garden.fullname" . }}
+    namespace: {{ .Release.Namespace }}
+    port: {{ .Values.service.port }}
+  rules:
+    - path: /*
+      methods:
+        - GET
+        - POST
+        - PUT
+        - DELETE
+        - PATCH
+      noAuth: true
+{{- end }}

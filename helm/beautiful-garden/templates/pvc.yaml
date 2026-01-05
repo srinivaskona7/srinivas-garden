@@ -1,0 +1,36 @@
+{{- if and .Values.backup.enabled (eq .Values.backup.type "pvc") }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "beautiful-garden.fullname" . }}-backup-pvc
+  labels:
+    {{- include "beautiful-garden.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    {{- toYaml .Values.backup.accessModes | nindent 4 }}
+  {{- if .Values.backup.storageClass }}
+  storageClassName: {{ .Values.backup.storageClass }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.backup.size }}
+{{- end }}
+
+{{- if and .Values.persistence.enabled (eq .Values.persistence.type "pvc") }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "beautiful-garden.fullname" . }}-pvc
+  labels:
+    {{- include "beautiful-garden.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    {{- toYaml .Values.persistence.accessModes | nindent 4 }}
+  {{- if .Values.persistence.storageClass }}
+  storageClassName: {{ .Values.persistence.storageClass }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.size }}
+{{- end }}

@@ -1,0 +1,241 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - navigation [ref=e2]:
+    - generic [ref=e3]:
+      - link "🌿 Beautiful Garden" [ref=e4] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e5]: 🌿
+        - generic [ref=e6]: Beautiful Garden
+      - list [ref=e7]:
+        - listitem [ref=e8]:
+          - link "🏠 Home" [ref=e9] [cursor=pointer]:
+            - /url: /
+        - listitem [ref=e10]: 👤 user
+        - listitem [ref=e11]:
+          - button "Logout" [ref=e12] [cursor=pointer]
+  - main [ref=e13]:
+    - generic [ref=e14]:
+      - generic [ref=e15]:
+        - heading "🌱 Leafy Vegetables Growth Tracker" [level=1] [ref=e16]
+        - paragraph [ref=e17]: Click on any plant to view and add photos/videos
+      - generic [ref=e18]:
+        - heading "My Plants" [level=2] [ref=e19]
+        - button "➕ Add Plant" [ref=e20] [cursor=pointer]
+      - generic [ref=e21]:
+        - button "All Plants" [ref=e22] [cursor=pointer]
+        - button "🌱 V1 - Soil Ready" [ref=e23] [cursor=pointer]
+        - button "🌿 V2 - Sprouts" [ref=e24] [cursor=pointer]
+        - button "🪴 V3 - Growing" [ref=e25] [cursor=pointer]
+        - button "🥬 V4 - Harvest" [ref=e26] [cursor=pointer]
+      - generic [ref=e27]:
+        - generic [ref=e28] [cursor=pointer]:
+          - generic [ref=e29]:
+            - heading "🪴 Spinach" [level=3] [ref=e30]
+            - generic [ref=e31]: Spinacia oleracea
+          - generic [ref=e32]:
+            - generic [ref=e33]:
+              - generic [ref=e34]:
+                - generic [ref=e35]: 🌱
+                - generic [ref=e36]: V1
+              - generic [ref=e37]:
+                - generic [ref=e38]: 🌿
+                - generic [ref=e39]: V2
+              - generic [ref=e40]:
+                - generic [ref=e41]: 🪴
+                - generic [ref=e42]: V3
+              - generic [ref=e43]:
+                - generic [ref=e44]: 🥬
+                - generic [ref=e45]: V4
+            - paragraph [ref=e46]: Healthy growth, regular watering
+            - generic [ref=e47]: V3
+          - generic [ref=e48]:
+            - button "⬆️ Advance" [ref=e49]
+            - button "🗑️" [ref=e50]
+        - generic [ref=e51] [cursor=pointer]:
+          - generic [ref=e52]:
+            - heading "🌿 Lettuce" [level=3] [ref=e53]
+            - generic [ref=e54]: Lactuca sativa
+          - generic [ref=e55]:
+            - generic [ref=e56]:
+              - generic [ref=e57]:
+                - generic [ref=e58]: 🌱
+                - generic [ref=e59]: V1
+              - generic [ref=e60]:
+                - generic [ref=e61]: 🌿
+                - generic [ref=e62]: V2
+              - generic [ref=e63]:
+                - generic [ref=e64]: 🪴
+                - generic [ref=e65]: V3
+              - generic [ref=e66]:
+                - generic [ref=e67]: 🥬
+                - generic [ref=e68]: V4
+            - paragraph [ref=e69]: Healthy sprouts, good germination rate
+            - generic [ref=e70]: V2
+          - generic [ref=e71]:
+            - button "⬆️ Advance" [ref=e72]
+            - button "🗑️" [ref=e73]
+        - generic [ref=e74] [cursor=pointer]:
+          - generic [ref=e75]:
+            - heading "🥬 Coriander" [level=3] [ref=e76]
+            - generic [ref=e77]: Coriandrum sativum
+          - generic [ref=e78]:
+            - generic [ref=e79]:
+              - generic [ref=e80]:
+                - generic [ref=e81]: 🌱
+                - generic [ref=e82]: V1
+              - generic [ref=e83]:
+                - generic [ref=e84]: 🌿
+                - generic [ref=e85]: V2
+              - generic [ref=e86]:
+                - generic [ref=e87]: 🪴
+                - generic [ref=e88]: V3
+              - generic [ref=e89]:
+                - generic [ref=e90]: 🥬
+                - generic [ref=e91]: V4
+            - paragraph [ref=e92]: Harvesting leaves as needed
+            - generic [ref=e93]: V4
+          - generic [ref=e94]:
+            - button "✓ Harvest Ready" [disabled] [ref=e95]
+            - button "🗑️" [ref=e96]
+        - generic [ref=e97] [cursor=pointer]:
+          - generic [ref=e98]:
+            - heading "🥬 Mint" [level=3] [ref=e99]
+            - generic [ref=e100]: Mentha
+          - generic [ref=e101]:
+            - generic [ref=e102]:
+              - generic [ref=e103]:
+                - generic [ref=e104]: 🌱
+                - generic [ref=e105]: V1
+              - generic [ref=e106]:
+                - generic [ref=e107]: 🌿
+                - generic [ref=e108]: V2
+              - generic [ref=e109]:
+                - generic [ref=e110]: 🪴
+                - generic [ref=e111]: V3
+              - generic [ref=e112]:
+                - generic [ref=e113]: 🥬
+                - generic [ref=e114]: V4
+            - paragraph [ref=e115]: Regular harvesting
+            - generic [ref=e116]: V4
+          - generic [ref=e117]:
+            - button "✓ Harvest Ready" [disabled] [ref=e118]
+            - button "🗑️" [ref=e119]
+        - generic [ref=e120] [cursor=pointer]:
+          - generic [ref=e121]:
+            - heading "🌱 Methi (Fenugreek)" [level=3] [ref=e122]
+            - generic [ref=e123]: Trigonella foenum-graecum
+          - generic [ref=e124]:
+            - generic [ref=e125]:
+              - generic [ref=e126]:
+                - generic [ref=e127]: 🌱
+                - generic [ref=e128]: V1
+              - generic [ref=e129]:
+                - generic [ref=e130]: 🌿
+                - generic [ref=e131]: V2
+              - generic [ref=e132]:
+                - generic [ref=e133]: 🪴
+                - generic [ref=e134]: V3
+              - generic [ref=e135]:
+                - generic [ref=e136]: 🥬
+                - generic [ref=e137]: V4
+            - paragraph [ref=e138]: Soil prepared today
+            - generic [ref=e139]: V1
+          - generic [ref=e140]:
+            - button "⬆️ Advance" [ref=e141]
+            - button "🗑️" [ref=e142]
+        - generic [ref=e143] [cursor=pointer]:
+          - generic [ref=e144]:
+            - heading "🌿 Palak (Indian Spinach)" [level=3] [ref=e145]
+            - generic [ref=e146]: Beta vulgaris
+          - generic [ref=e147]:
+            - generic [ref=e148]:
+              - generic [ref=e149]:
+                - generic [ref=e150]: 🌱
+                - generic [ref=e151]: V1
+              - generic [ref=e152]:
+                - generic [ref=e153]: 🌿
+                - generic [ref=e154]: V2
+              - generic [ref=e155]:
+                - generic [ref=e156]: 🪴
+                - generic [ref=e157]: V3
+              - generic [ref=e158]:
+                - generic [ref=e159]: 🥬
+                - generic [ref=e160]: V4
+            - paragraph [ref=e161]: Good germination
+            - generic [ref=e162]: V2
+          - generic [ref=e163]:
+            - button "⬆️ Advance" [ref=e164]
+            - button "🗑️" [ref=e165]
+        - generic [ref=e166] [cursor=pointer]:
+          - generic [ref=e167]:
+            - heading "🌱 Playwright Test Plant" [level=3] [ref=e168]
+            - generic [ref=e169]: Test Species
+          - generic [ref=e170]:
+            - generic [ref=e171]:
+              - generic [ref=e172]:
+                - generic [ref=e173]: 🌱
+                - generic [ref=e174]: V1
+              - generic [ref=e175]:
+                - generic [ref=e176]: 🌿
+                - generic [ref=e177]: V2
+              - generic [ref=e178]:
+                - generic [ref=e179]: 🪴
+                - generic [ref=e180]: V3
+              - generic [ref=e181]:
+                - generic [ref=e182]: 🥬
+                - generic [ref=e183]: V4
+            - paragraph [ref=e184]: Click to view details
+            - generic [ref=e185]: V1
+          - generic [ref=e186]:
+            - button "⬆️ Advance" [ref=e187]
+            - button "🗑️" [ref=e188]
+        - generic [ref=e189] [cursor=pointer]:
+          - generic [ref=e190]:
+            - heading "🌱 Playwright Test Plant" [level=3] [ref=e191]
+            - generic [ref=e192]: Test Species
+          - generic [ref=e193]:
+            - generic [ref=e194]:
+              - generic [ref=e195]:
+                - generic [ref=e196]: 🌱
+                - generic [ref=e197]: V1
+              - generic [ref=e198]:
+                - generic [ref=e199]: 🌿
+                - generic [ref=e200]: V2
+              - generic [ref=e201]:
+                - generic [ref=e202]: 🪴
+                - generic [ref=e203]: V3
+              - generic [ref=e204]:
+                - generic [ref=e205]: 🥬
+                - generic [ref=e206]: V4
+            - paragraph [ref=e207]: Click to view details
+            - generic [ref=e208]: V1
+          - generic [ref=e209]:
+            - button "⬆️ Advance" [ref=e210]
+            - button "🗑️" [ref=e211]
+        - generic [ref=e212] [cursor=pointer]:
+          - generic [ref=e213]:
+            - heading "🌱 Playwright Test Plant" [level=3] [ref=e214]
+            - generic [ref=e215]: Test Species
+          - generic [ref=e216]:
+            - generic [ref=e217]:
+              - generic [ref=e218]:
+                - generic [ref=e219]: 🌱
+                - generic [ref=e220]: V1
+              - generic [ref=e221]:
+                - generic [ref=e222]: 🌿
+                - generic [ref=e223]: V2
+              - generic [ref=e224]:
+                - generic [ref=e225]: 🪴
+                - generic [ref=e226]: V3
+              - generic [ref=e227]:
+                - generic [ref=e228]: 🥬
+                - generic [ref=e229]: V4
+            - paragraph [ref=e230]: Click to view details
+            - generic [ref=e231]: V1
+          - generic [ref=e232]:
+            - button "⬆️ Advance" [ref=e233]
+            - button "🗑️" [ref=e234]
+  - generic [ref=e235]: Plant added at V1!
+```

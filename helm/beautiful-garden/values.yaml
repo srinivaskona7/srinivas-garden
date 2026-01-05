@@ -1,0 +1,169 @@
+# Beautiful Garden Helm Chart Values
+# Default values for beautiful-garden
+
+# Application image configuration
+image:
+  repository: sriniv7654/garden
+  tag: v1.0.13
+  pullPolicy: IfNotPresent
+
+# Image pull secrets (if using private registry)
+imagePullSecrets: []
+
+# Service account configuration
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+# Pod annotations
+podAnnotations: {}
+
+# Pod security context
+podSecurityContext:
+  fsGroup: 1001
+
+# Container security context
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 1001
+
+# Replica count
+replicaCount: 1
+
+# Resource limits and requests (minimal)
+resources:
+  limits:
+    cpu: 100m
+    memory: 192Mi
+  requests:
+    cpu: 10m
+    memory: 64Mi
+
+# Liveness probe configuration
+livenessProbe:
+  httpGet:
+    path: /health/live
+    port: http
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 3
+
+# Readiness probe configuration
+readinessProbe:
+  httpGet:
+    path: /health/live
+    port: http
+  initialDelaySeconds: 10
+  periodSeconds: 5
+  timeoutSeconds: 3
+  failureThreshold: 3
+
+# Service configuration
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 3000
+
+# Ingress configuration
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: beautiful-garden.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+# Autoscaling configuration
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
+
+# Node selector
+nodeSelector: {}
+
+# Tolerations
+tolerations: []
+
+# Affinity
+affinity: {}
+
+# Application configuration (stored in ConfigMap)
+config:
+  nodeEnv: production
+  port: "3000"
+  appName: "Beautiful Garden"
+
+# Secrets configuration
+secrets:
+  # MongoDB root password
+  mongodbRootPassword: "beautiful-garden-root-2024"
+  # MongoDB password for the application
+  mongodbPassword: "beautiful-garden-pass-2024"
+
+# MongoDB configuration (Bitnami subchart) - DISABLED (app uses in-memory mode)
+mongodb:
+  enabled: false
+  architecture: standalone
+  image:
+    tag: "7.0"
+  auth:
+    enabled: true
+    rootPassword: "beautiful-garden-root-2024"
+    username: "garden"
+    password: "beautiful-garden-pass-2024"
+    database: "beautiful-garden"
+  persistence:
+    enabled: true
+    storageClass: "default"
+    size: 8Gi
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+
+# Main Application Persistence (Data & Uploads)
+# Main Application Persistence (Data & Uploads)
+persistence:
+  enabled: true
+  type: hostPath
+  hostPath: /var/data/beautiful-garden/data
+  # PVC Config (Ignored if type is hostPath)
+  storageClass: "default"
+  size: 10Gi
+  accessModes:
+    - ReadWriteOnce
+
+# Persistent Volume Claim for database backups
+# Persistent Volume Claim for database backups
+backup:
+  enabled: true
+  type: hostPath
+  hostPath: /var/data/beautiful-garden/backups
+  # PVC Config (Ignored if type is hostPath)
+  storageClass: "default"
+  size: 5Gi
+  accessModes:
+    - ReadWriteOnce
+
+# Kyma APIRule configuration (exposes service via Istio Gateway)
+apirule:
+  enabled: true
+  host: garden.srinivaskona.life
+  gateway: garden/beautiful-garden-gateway
+
+# Gardener Certificate (Let's Encrypt SSL)
+certificate:
+  enabled: true
+  domain: garden.srinivaskona.life
+  issuer: ""

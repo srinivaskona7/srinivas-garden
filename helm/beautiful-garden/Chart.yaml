@@ -1,0 +1,20 @@
+apiVersion: v2
+name: beautiful-garden
+description: A Helm chart for Beautiful Garden - Plant Management Application
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+keywords:
+  - garden
+  - plants
+  - nodejs
+  - mongodb
+maintainers:
+  - name: Beautiful Garden Team
+home: https://github.com/sriniv7654/garden
+
+dependencies:
+  - name: mongodb
+    version: "16.4.2"
+    repository: "https://charts.bitnami.com/bitnami"
+    condition: mongodb.enabled

@@ -1,0 +1,5 @@
+# Backup files are stored here
+# This file ensures the directory is tracked by git
+
+*.tar.gz
+!.gitkeep

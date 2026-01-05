@@ -1,0 +1,21 @@
+{{- if .Values.certificate.enabled -}}
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ include "beautiful-garden.fullname" . }}-letsencrypt
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "beautiful-garden.labels" . | nindent 4 }}
+spec:
+  secretName: beautiful-garden-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: {{ .Values.certificate.domain }}
+  dnsNames:
+  - {{ .Values.certificate.domain }}
+  privateKey:
+    algorithm: RSA
+    encoding: PKCS1
+    size: 2048
+{{- end }}

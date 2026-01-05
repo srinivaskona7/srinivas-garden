@@ -1,0 +1,1623 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= title %> | Sri's Garden
+    </title>
+  <link rel="icon" type="image/png" href="/images/favicon.png">
+  <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .version-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .version-v1 {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .version-v2 {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .version-v3 {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .version-v4 {
+            background: #c7d2fe;
+            color: #3730a3;
+        }
+
+        .plant-growth-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .plant-growth-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        .plant-growth-header {
+            padding: 16px;
+            background: linear-gradient(135deg, #065f46 0%, #10b981 100%);
+            color: white;
+        }
+
+        .plant-growth-header h4 {
+            font-size: 18px;
+            margin: 0 0 4px 0;
+        }
+
+        .plant-growth-header .species {
+            opacity: 0.8;
+            font-size: 14px;
+        }
+
+        .plant-growth-body {
+            padding: 16px;
+        }
+
+        .version-progress {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .version-step {
+            text-align: center;
+            padding: 8px 4px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .version-step.active {
+            background: #d1fae5;
+        }
+
+        .version-step.current {
+            background: #dbeafe;
+            border: 2px solid #3b82f6;
+        }
+
+        .version-step .step-icon {
+            font-size: 24px;
+            margin-bottom: 4px;
+        }
+
+        .version-step .step-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #6b7280;
+        }
+
+        .version-step.active .step-label {
+            color: #065f46;
+        }
+
+        .version-step.current .step-label {
+            color: #1e40af;
+        }
+
+        .version-thumbnails {
+            display: flex;
+            gap: 8px;
+            margin: 12px 0;
+            flex-wrap: wrap;
+        }
+
+        .version-thumb {
+            position: relative;
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid #10b981;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .version-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .version-thumb .video-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #dbeafe 0%, #93c5fd 100%);
+            font-size: 20px;
+        }
+
+        .version-thumb .thumb-label {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            font-size: 9px;
+            font-weight: 600;
+            text-align: center;
+            padding: 2px 0;
+        }
+
+        .plant-card-actions {
+            display: flex;
+            gap: 8px;
+            padding: 12px 16px;
+            background: #f9fafb;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .btn-advance {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+
+        .btn-advance:hover {
+            transform: scale(1.02);
+        }
+
+        .btn-advance:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .filter-tab {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 2px solid #e5e7eb;
+            background: white;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-tab:hover {
+            border-color: #10b981;
+        }
+
+        .filter-tab.active {
+            background: #10b981;
+            color: white;
+            border-color: #10b981;
+        }
+
+        /* Full View Modal */
+        .fullview-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 10000;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        /* Media Modal - must be above fullview */
+        #mediaModal {
+            z-index: 20000 !important;
+        }
+
+        #mediaModal .modal-content {
+            background: white;
+            color: #333;
+        }
+
+        .fullview-modal.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .fullview-close {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            font-size: 40px;
+            color: white;
+            cursor: pointer;
+            z-index: 10001;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .fullview-content {
+            max-width: 900px;
+            width: 100%;
+            margin: 0 auto;
+            color: white;
+        }
+
+        .fullview-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .fullview-header h2 {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .fullview-header .species {
+            color: #9ca3af;
+            font-size: 18px;
+        }
+
+        .version-gallery {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .version-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .version-card-header {
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .version-card-header .icon {
+            font-size: 24px;
+        }
+
+        .version-card-header .title {
+            font-weight: 600;
+        }
+
+        .version-card-header .status {
+            margin-left: auto;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .version-card-header .status.done {
+            background: #10b981;
+        }
+
+        .version-card-header .status.current {
+            background: #3b82f6;
+        }
+
+        .version-card-header .status.pending {
+            background: #6b7280;
+        }
+
+        .version-media {
+            aspect-ratio: 16/9;
+            background: #1f2937;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .version-media img,
+        .version-media video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-wrapper .video-controls {
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .video-wrapper:hover .video-controls {
+            opacity: 1;
+        }
+
+        .version-media .placeholder {
+            font-size: 48px;
+            opacity: 0.3;
+        }
+
+        .version-media .upload-btn {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(16, 185, 129, 0.9);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Version Media Container - shows both image and video */
+        .version-media-container {
+            background: #1f2937;
+            cursor: pointer;
+            position: relative;
+            min-height: 120px;
+        }
+
+        .version-media-container .upload-btn {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(16, 185, 129, 0.9);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .media-item {
+            position: relative;
+            margin-bottom: 8px;
+        }
+
+        .media-item:last-child {
+            margin-bottom: 40px;
+        }
+
+        .media-item img,
+        .media-item video {
+            width: 100%;
+            max-height: 200px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .media-delete-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(220, 38, 38, 0.9);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 6px 10px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+            z-index: 5;
+        }
+
+        .media-delete-btn:hover {
+            background: #dc2626;
+            transform: scale(1.1);
+        }
+
+        .media-type-badge {
+            position: absolute;
+            bottom: 8px;
+            left: 8px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .media-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .media-placeholder .placeholder {
+            font-size: 48px;
+            opacity: 0.3;
+        }
+
+        .media-placeholder p {
+            color: #6b7280;
+            margin-top: 8px;
+            font-size: 14px;
+        }
+
+        .version-notes {
+            padding: 12px 16px;
+            font-size: 14px;
+            color: #d1d5db;
+        }
+
+        /* File Upload Styles */
+        .file-upload-area {
+            border: 2px dashed #4b5563;
+            border-radius: 12px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: #f9fafb;
+        }
+
+        .file-upload-area:hover {
+            border-color: #10b981;
+            background: #ecfdf5;
+        }
+
+        .file-upload-area.dragover {
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.15);
+            transform: scale(1.02);
+        }
+
+        .file-upload-area .icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .file-upload-area .text {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .file-upload-area .text span {
+            color: #10b981;
+            font-weight: 600;
+        }
+
+        /* File Info Panel */
+        .file-info-panel {
+            margin-top: 16px;
+            padding: 16px;
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            border-radius: 12px;
+            border: 1px solid #86efac;
+        }
+
+        .file-info-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .file-type-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .file-type-icon.image {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+        }
+
+        .file-type-icon.video {
+            background: linear-gradient(135deg, #dbeafe 0%, #93c5fd 100%);
+        }
+
+        .file-details {
+            flex: 1;
+        }
+
+        .file-name {
+            font-weight: 600;
+            color: #1f2937;
+            font-size: 14px;
+            margin-bottom: 4px;
+            word-break: break-word;
+        }
+
+        .file-meta {
+            display: flex;
+            gap: 12px;
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .file-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .file-remove-btn {
+            background: #fee2e2;
+            border: none;
+            color: #dc2626;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+
+        .file-remove-btn:hover {
+            background: #fecaca;
+            transform: scale(1.1);
+        }
+
+        .file-preview {
+            margin-top: 12px;
+            border-radius: 10px;
+            overflow: hidden;
+            max-height: 180px;
+            border: 2px solid #86efac;
+        }
+
+        .file-preview img,
+        .file-preview video {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+
+        .version-option {
+            transition: all 0.2s ease;
+        }
+
+        .version-option:hover {
+            border-color: #10b981 !important;
+            background: #ecfdf5;
+        }
+
+        .version-option:has(input:checked) {
+            border-color: #10b981 !important;
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+        }
+
+        /* Upload Progress */
+        .upload-progress {
+            margin-top: 16px;
+            padding: 16px;
+            background: #f3f4f6;
+            border-radius: 12px;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .progress-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #1f2937;
+        }
+
+        .progress-status .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid #e5e7eb;
+            border-top-color: #10b981;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .progress-percentage {
+            font-size: 14px;
+            font-weight: 600;
+            color: #10b981;
+        }
+
+        .progress-bar {
+            height: 10px;
+            background: #e5e7eb;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981, #34d399);
+            border-radius: 5px;
+            transition: width 0.2s ease-out;
+        }
+
+        .progress-details {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .upload-speed {
+            color: #10b981;
+        }
+
+        /* Upload Success State */
+        .upload-success {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            border: 1px solid #10b981;
+        }
+
+        .upload-success .progress-status {
+            color: #059669;
+        }
+
+        .upload-success .progress-fill {
+            background: #10b981;
+        }
+
+        /* Max file size warning */
+        .file-size-warning {
+            margin-top: 8px;
+            padding: 8px 12px;
+            background: #fef3c7;
+            border-radius: 8px;
+            font-size: 12px;
+            color: #92400e;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .file-size-error {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-admin">
+        <div class="nav-container">
+            <a href="/" class="nav-logo">
+                <span class="logo-icon">🌿</span>
+                <span class="logo-text">Sri's Garden</span>
+            </a>
+            <!-- Disk Space Indicator -->
+            <div id="diskSpaceIndicator"
+                style="display: flex; align-items: center; gap: 6px; font-size: 11px; margin-left: 20px; background: rgba(255,255,255,0.2); padding: 4px 8px; border-radius: 12px; color: #064e3b; font-weight: 500;">
+                <span>💾 Storage:</span>
+                <span id="diskFreeSpace">Checking...</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="/changelog" class="nav-link">📜 Changelog</a></li>
+                <li><a href="/" class="nav-link">🏠 Home</a></li>
+                <li><span class="nav-user" id="navUser">👤 Admin</span></li>
+                <li><button class="btn btn-sm btn-secondary" onclick="logout()">Logout</button></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="admin-main">
+        <div class="container">
+            <div class="admin-header">
+                <h1>🌱 Leafy Vegetables Growth Tracker</h1>
+                <p>Click on any plant to view and add photos/videos</p>
+            </div>
+
+            <div class="tab-header">
+                <h2>My Plants</h2>
+                <button class="btn btn-primary" onclick="showAddPlantModal()">➕ Add Plant</button>
+            </div>
+
+            <div class="filter-tabs">
+                <button class="filter-tab active" data-filter="all">All Plants</button>
+                <button class="filter-tab" data-filter="v1">🌱 V1 - Soil Ready</button>
+                <button class="filter-tab" data-filter="v2">🌿 V2 - Sprouts</button>
+                <button class="filter-tab" data-filter="v3">🪴 V3 - Growing</button>
+                <button class="filter-tab" data-filter="v4">🥬 V4 - Harvest</button>
+            </div>
+
+            <div class="admin-grid" id="plantsGrid"></div>
+        </div>
+    </main>
+
+    <!-- Full View Modal -->
+    <div id="fullviewModal" class="fullview-modal">
+        <div class="fullview-close" onclick="closeFullview()">&times;</div>
+        <div class="fullview-content" id="fullviewContent"></div>
+    </div>
+
+    <!-- Add Plant Modal -->
+    <div id="addPlantModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="plantModalTitle">🌱 Add New Plant</h2>
+                <button class="modal-close" onclick="closeModal('addPlantModal')">&times;</button>
+            </div>
+            <form id="addPlantForm" onsubmit="handleAddPlant(event)">
+                <input type="hidden" id="editPlantId">
+                <div class="form-group">
+                    <label for="plantName">Plant/Crop Name *</label>
+                    <input type="text" id="plantName" required placeholder="e.g., Spinach, Lettuce, Coriander">
+                </div>
+
+                <div class="form-group">
+                    <label>Current Growth Version *</label>
+                    <div class="version-selector"
+                        style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 8px;">
+                        <label class="version-option"
+                            style="text-align: center; padding: 12px 8px; border: 2px solid #e5e7eb; border-radius: 12px; cursor: pointer;">
+                            <input type="radio" name="plantVersion" value="v1" checked style="display: none;">
+                            <div style="font-size: 28px; margin-bottom: 4px;">🌱</div>
+                            <div style="font-weight: 600; font-size: 12px;">V1</div>
+                            <div style="font-size: 10px; color: #6b7280;">Soil Ready</div>
+                        </label>
+                        <label class="version-option"
+                            style="text-align: center; padding: 12px 8px; border: 2px solid #e5e7eb; border-radius: 12px; cursor: pointer;">
+                            <input type="radio" name="plantVersion" value="v2" style="display: none;">
+                            <div style="font-size: 28px; margin-bottom: 4px;">🌿</div>
+                            <div style="font-weight: 600; font-size: 12px;">V2</div>
+                            <div style="font-size: 10px; color: #6b7280;">Sprouts</div>
+                        </label>
+                        <label class="version-option"
+                            style="text-align: center; padding: 12px 8px; border: 2px solid #e5e7eb; border-radius: 12px; cursor: pointer;">
+                            <input type="radio" name="plantVersion" value="v3" style="display: none;">
+                            <div style="font-size: 28px; margin-bottom: 4px;">🪴</div>
+                            <div style="font-weight: 600; font-size: 12px;">V3</div>
+                            <div style="font-size: 10px; color: #6b7280;">Growing</div>
+                        </label>
+                        <label class="version-option"
+                            style="text-align: center; padding: 12px 8px; border: 2px solid #e5e7eb; border-radius: 12px; cursor: pointer;">
+                            <input type="radio" name="plantVersion" value="v4" style="display: none;">
+                            <div style="font-size: 28px; margin-bottom: 4px;">🥬</div>
+                            <div style="font-weight: 600; font-size: 12px;">V4</div>
+                            <div style="font-size: 10px; color: #6b7280;">Harvest</div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="plantSpecies">Species/Variety</label>
+                    <input type="text" id="plantSpecies" placeholder="e.g., Spinacia oleracea">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="plantCategory">Category</label>
+                        <select id="plantCategory">
+                            <option value="leafy-vegetable" selected>Leafy Vegetable</option>
+                            <option value="herb">Herb</option>
+                            <option value="microgreen">Microgreen</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="plantLocation">Location</label>
+                        <select id="plantLocation">
+                            <option value="outdoor" selected>Outdoor</option>
+                            <option value="indoor">Indoor</option>
+                            <option value="greenhouse">Greenhouse</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="plantVersionNotes">Notes</label>
+                    <input type="text" id="plantVersionNotes" placeholder="e.g., Soil prepared with compost">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary"
+                        onclick="closeModal('addPlantModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="plantSubmitBtn">Add Plant</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Media Upload Modal -->
+    <div id="mediaModal" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h2 id="mediaModalTitle">📸 Add Photo/Video</h2>
+                <button class="modal-close" onclick="closeModal('mediaModal')">&times;</button>
+            </div>
+            <form id="mediaForm" onsubmit="handleMediaUpload(event)">
+                <input type="hidden" id="mediaPlantId">
+                <input type="hidden" id="mediaVersion">
+
+                <div class="file-upload-area" id="fileUploadArea"
+                    onclick="document.getElementById('fileInput').click()">
+                    <div class="icon">📷</div>
+                    <div class="text">
+                        <span>Click to upload</span> or drag & drop<br>
+                        <small style="color: #9ca3af;">Images: JPG, PNG, GIF, WEBP (max 10MB)</small><br>
+                        <small style="color: #9ca3af;">Videos: MP4, MOV, WEBM (max 1GB)</small>
+                    </div>
+                    <input type="file" id="fileInput" accept="image/*,video/*" style="display: none;"
+                        onchange="handleFileSelect(event)">
+                </div>
+
+                <!-- File Info Panel (hidden until file selected) -->
+                <div id="fileInfoPanel" class="file-info-panel" style="display: none;">
+                    <div class="file-info-header">
+                        <div class="file-type-icon" id="fileTypeIcon">📷</div>
+                        <div class="file-details">
+                            <div class="file-name" id="fileName">filename.jpg</div>
+                            <div class="file-meta">
+                                <span class="file-meta-item" id="fileSize">📦 0 KB</span>
+                                <span class="file-meta-item" id="fileType">🏷️ image/jpeg</span>
+                                <span class="file-meta-item" id="fileDimensions"></span>
+                            </div>
+                        </div>
+                        <button type="button" class="file-remove-btn" onclick="clearSelectedFile()"
+                            title="Remove file">✕</button>
+                    </div>
+                    <div id="filePreview" class="file-preview"></div>
+                    <div id="fileSizeWarning" class="file-size-warning" style="display: none;">
+                        <span>⚠️</span> <span id="fileSizeWarningText"></span>
+                    </div>
+                </div>
+
+                <!-- Upload Progress (hidden until upload starts) -->
+                <div id="uploadProgress" class="upload-progress" style="display: none;">
+                    <div class="progress-header">
+                        <div class="progress-status">
+                            <div class="spinner"></div>
+                            <span id="uploadStatusText">Uploading...</span>
+                        </div>
+                        <div class="progress-percentage" id="progressPercentage">0%</div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                    </div>
+                    <div class="progress-details">
+                        <span id="uploadedSize">0 KB / 0 KB</span>
+                        <span class="upload-speed" id="uploadSpeed">0 KB/s</span>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top: 16px;">
+                    <label for="mediaNotes">Notes (optional)</label>
+                    <input type="text" id="mediaNotes" placeholder="Describe this photo/video">
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('mediaModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="uploadBtn" disabled>
+                        <span id="uploadBtnText">Upload</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script>
+        const API_BASE = '/api';
+        let currentFilter = 'all';
+        let plantsData = [];
+        let selectedFile = null;
+
+        function checkAuth() {
+            const token = localStorage.getItem('authToken');
+            if (!token) { window.location.href = '/login'; return false; }
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            document.getElementById('navUser').textContent = `👤 ${user.username || 'Admin'}`;
+            return true;
+        }
+
+        function logout() {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('user');
+            window.location.href = '/login';
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast ${type} show`;
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        function showModal(id) { document.getElementById(id).classList.add('active'); }
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+            document.getElementById(id).querySelector('form')?.reset();
+            if (id === 'mediaModal') {
+                selectedFile = null;
+                document.getElementById('filePreview').style.display = 'none';
+                document.getElementById('filePreview').innerHTML = '';
+                document.getElementById('uploadBtn').disabled = true;
+            }
+        }
+
+        document.querySelectorAll('.filter-tab').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFilter = btn.dataset.filter;
+                loadPlants();
+            });
+        });
+
+        function getVersionIcon(version) {
+            const icons = { v1: '🌱', v2: '🌿', v3: '🪴', v4: '🥬' };
+            return icons[version] || '🌱';
+        }
+
+        function getVersionClass(plantVersion, stepVersion) {
+            const order = ['v1', 'v2', 'v3', 'v4'];
+            const plantIdx = order.indexOf(plantVersion);
+            const stepIdx = order.indexOf(stepVersion);
+            if (stepIdx < plantIdx) return 'active';
+            if (stepIdx === plantIdx) return 'current';
+            return '';
+        }
+
+        function loadPlants() {
+            fetch(`${API_BASE}/plants`)
+                .then(res => res.json())
+                .then(result => {
+                    const grid = document.getElementById('plantsGrid');
+                    plantsData = result.data || [];
+                    let plants = [...plantsData];
+
+                    if (currentFilter !== 'all') {
+                        plants = plants.filter(p => p.currentVersion === currentFilter);
+                    }
+
+                    if (plants.length > 0) {
+                        grid.innerHTML = plants.map(plant => {
+                            // Build version thumbnails matching Public UI
+                            const mediaThumbs = ['v1', 'v2', 'v3', 'v4'].filter(v =>
+                                plant.versions?.[v]?.image || plant.versions?.[v]?.video
+                            );
+
+                            const thumbnailsHtml = mediaThumbs.length > 0 ?
+                                `<div class="version-thumbnails">
+                                    ${mediaThumbs.map(v => `
+                                        <div class="version-thumb" title="${v.toUpperCase()} media">
+                                            ${plant.versions[v].image ?
+                                        `<img src="${plant.versions[v].image}" alt="${v}">` :
+                                        `<span class="video-indicator">🎬</span>`}
+                                            <span class="thumb-label">${v.toUpperCase()}</span>
+                                        </div>
+                                    `).join('')}
+                                </div>` : '';
+
+                            // Icons map
+                            const icons = { v1: '🌱', v2: '🌿', v3: '🪴', v4: '🥬' };
+                            const versionIcon = icons[plant.currentVersion] || '🌱';
+
+                            return `
+                                <div class="plant-growth-card" data-id="${plant._id}" onclick="openFullview('${plant._id}')">
+                                    <div class="plant-growth-header">
+                                        <h4>${versionIcon} ${plant.name}</h4>
+                                        <div class="species">${plant.species || plant.category || 'Leafy Vegetable'}</div>
+                                    </div>
+                                    <div class="plant-growth-body">
+                                        <div class="version-progress">
+                                            <div class="version-step ${getVersionClass(plant.currentVersion, 'v1')}"><div class="step-icon">🌱</div><div class="step-label">V1</div></div>
+                                            <div class="version-step ${getVersionClass(plant.currentVersion, 'v2')}"><div class="step-icon">🌿</div><div class="step-label">V2</div></div>
+                                            <div class="version-step ${getVersionClass(plant.currentVersion, 'v3')}"><div class="step-icon">🪴</div><div class="step-label">V3</div></div>
+                                            <div class="version-step ${getVersionClass(plant.currentVersion, 'v4')}"><div class="step-icon">🥬</div><div class="step-label">V4</div></div>
+                                        </div>
+                                        
+                                        ${thumbnailsHtml}
+                                        
+                                        <p style="font-size: 13px; color: #6b7280; margin-bottom: 8px;">
+                                            ${plant.versions?.[plant.currentVersion]?.notes || 'Click to view details'}
+                                        </p>
+                                        <span class="version-badge version-${plant.currentVersion}">${plant.currentVersion.toUpperCase()}</span>
+                                    </div>
+                                    <div class="plant-card-actions" onclick="event.stopPropagation()">
+                                        <button class="btn-advance" onclick="advancePlant('${plant._id}')" ${plant.currentVersion === 'v4' ? 'disabled' : ''}>
+                                            ${plant.currentVersion === 'v4' ? '✓ Ready' : '⬆️ Advance'}
+                                        </button>
+                                        <button class="btn-icon btn-danger" onclick="deletePlant('${plant._id}')" title="Delete">🗑️</button>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('');
+                    } else {
+                        grid.innerHTML = '<div class="empty-message"><p>No plants found. Add your first leafy vegetable!</p></div>';
+                    }
+                })
+                .catch(error => console.error('Error loading plants:', error));
+        }
+
+        function openFullview(plantId) {
+            const plant = plantsData.find(p => p._id === plantId);
+            if (!plant) return;
+
+            const versions = ['v1', 'v2', 'v3', 'v4'];
+            const versionNames = { v1: 'Prepared Soil', v2: 'Sprouts', v3: 'Growing', v4: 'Ready to Harvest' };
+            const currentIdx = versions.indexOf(plant.currentVersion);
+
+            const content = document.getElementById('fullviewContent');
+            content.innerHTML = `
+        <div class="fullview-header">
+          <h2>${getVersionIcon(plant.currentVersion)} ${plant.name}</h2>
+          <div class="species">${plant.species || plant.category || 'Leafy Vegetable'}</div>
+          <div style="margin-top: 16px;">
+            <span class="version-badge version-${plant.currentVersion}" style="font-size: 16px; padding: 8px 20px;">
+              Currently: ${plant.currentVersion.toUpperCase()} - ${versionNames[plant.currentVersion]}
+            </span>
+          </div>
+        </div>
+        
+        <div class="version-gallery">
+          ${versions.map((v, idx) => {
+                const vData = plant.versions?.[v] || {};
+                const status = idx < currentIdx ? 'done' : (idx === currentIdx ? 'current' : 'pending');
+                const hasVideo = vData.video;
+                const hasImage = vData.image;
+
+                // Build media content - show both if both exist
+                let mediaContent = '';
+                if (hasImage) {
+                    mediaContent += `
+                      <div class="media-item">
+                        <img src="${vData.image}" alt="${v} image">
+                        <div class="media-actions" style="position: absolute; top: 8px; right: 8px; display: flex; gap: 8px; z-index: 20;">
+                            <button class="media-btn edit" onclick="event.stopPropagation(); openMediaModal('${plantId}', '${v}')" title="Replace Image" style="background: rgba(16, 185, 129, 0.9); color: white; border: none; border-radius: 8px; width: 32px; height: 32px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px;">✏️</button>
+                            <button class="media-btn delete" onclick="event.stopPropagation(); deleteMedia('${plantId}', '${v}', 'image')" title="Delete Image" style="background: rgba(220, 38, 38, 0.9); color: white; border: none; border-radius: 8px; width: 32px; height: 32px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px;">🗑️</button>
+                        </div>
+                        <span class="media-type-badge">📷 Image</span>
+                      </div>`;
+                }
+                if (hasVideo) {
+                    mediaContent += `
+                      <div class="media-item">
+                        <div class="video-wrapper" style="position: relative;">
+                          <video src="${vData.video}" controls playsinline id="admin-video-${plantId}-${v}"></video>
+                         <div class="video-controls" style="position: absolute; bottom: 40px; right: 10px; z-index: 10; background: rgba(0,0,0,0.6); padding: 4px; border-radius: 4px;">
+                             <select onchange="document.getElementById('admin-video-${plantId}-${v}').playbackRate = this.value" onclick="event.stopPropagation()" style="background: transparent; color: white; border: 1px solid white; font-size: 10px; border-radius: 4px; cursor: pointer;">
+                               <option value="1">1x</option>
+                               <option value="1.25">1.25x</option>
+                               <option value="1.5">1.5x</option>
+                               <option value="2">2x</option>
+                             </select>
+                          </div>
+                        </div>
+                        <div class="media-actions" style="position: absolute; top: 8px; right: 8px; display: flex; gap: 8px; z-index: 20;">
+                            <button class="media-btn edit" onclick="event.stopPropagation(); openMediaModal('${plantId}', '${v}')" title="Replace Video" style="background: rgba(16, 185, 129, 0.9); color: white; border: none; border-radius: 8px; width: 32px; height: 32px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px;">✏️</button>
+                            <button class="media-btn delete" onclick="event.stopPropagation(); deleteMedia('${plantId}', '${v}', 'video')" title="Delete Video" style="background: rgba(220, 38, 38, 0.9); color: white; border: none; border-radius: 8px; width: 32px; height: 32px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px;">🗑️</button>
+                        </div>
+                        <span class="media-type-badge">🎬 Video</span>
+                      </div>`;
+                }
+                if (!hasImage && !hasVideo) {
+                    mediaContent = `<div class="media-placeholder"><span class="placeholder">${status === 'pending' ? '⏳' : '📷'}</span><p>Click to add media</p></div>`;
+                }
+
+                return `
+              <div class="version-card">
+                <div class="version-card-header">
+                  <span class="icon">${getVersionIcon(v)}</span>
+                  <span class="title">${v.toUpperCase()} - ${versionNames[v]}</span>
+                  <span class="status ${status}">${status === 'done' ? '✓ Done' : (status === 'current' ? '● Current' : '○ Pending')}</span>
+                </div>
+                <div class="version-media-container" style="position: relative;">
+                  ${mediaContent}
+                  ${!hasImage && !hasVideo ? `<button class="upload-btn" onclick="openMediaModal('${plantId}', '${v}')" style="position: absolute; bottom: 10px; right: 10px; background: rgba(16, 185, 129, 0.9); color: white; padding: 8px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; z-index: 10; border:none;">📷 Add Media</button>` : ''}
+                </div>
+                <div class="version-notes">
+                  ${vData.notes || (status === 'pending' ? 'Not yet reached' : 'No notes - click to add')}
+                  ${vData.date ? `<div style="font-size: 11px; margin-top: 4px; opacity: 0.6;">📅 ${new Date(vData.date).toLocaleDateString()}</div>` : ''}
+                </div>
+              </div>
+            `;
+            }).join('')}
+        </div>
+      `;
+
+            document.getElementById('fullviewModal').classList.add('active');
+        }
+
+        function closeFullview() {
+            document.getElementById('fullviewModal').classList.remove('active');
+        }
+
+        function openMediaModal(plantId, version) {
+            resetMediaModal(); // Clear any previous state
+            document.getElementById('mediaPlantId').value = plantId;
+            document.getElementById('mediaVersion').value = version;
+            document.getElementById('mediaModalTitle').textContent = `📸 Add Photo/Video - ${version.toUpperCase()}`;
+            showModal('mediaModal');
+        }
+
+        // Helper: Format file size
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Helper: Get file extension
+        function getFileExtension(filename) {
+            return filename.slice((filename.lastIndexOf('.') - 1 >>> 0) + 2).toUpperCase();
+        }
+
+        // Constants for file size limits
+        const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10 MB
+        const MAX_VIDEO_SIZE = 1024 * 1024 * 1024; // 1 GB
+
+        // Clear selected file
+        function clearSelectedFile() {
+            selectedFile = null;
+            document.getElementById('fileInput').value = '';
+            document.getElementById('fileInfoPanel').style.display = 'none';
+            document.getElementById('fileUploadArea').style.display = 'block';
+            document.getElementById('fileUploadArea').querySelector('.icon').textContent = '📷';
+            document.getElementById('uploadBtn').disabled = true;
+            document.getElementById('uploadBtnText').textContent = 'Upload';
+        }
+
+        // Reset media modal state
+        function resetMediaModal() {
+            clearSelectedFile();
+            document.getElementById('mediaNotes').value = '';
+            document.getElementById('uploadProgress').style.display = 'none';
+            document.getElementById('progressFill').style.width = '0%';
+        }
+
+        // File handling with full info display
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const isVideo = file.type.startsWith('video/');
+            const isImage = file.type.startsWith('image/');
+
+            // Validate file type
+            if (!isVideo && !isImage) {
+                showToast('Please select an image or video file', 'error');
+                return;
+            }
+
+            // Validate file size
+            const maxSize = isVideo ? MAX_VIDEO_SIZE : MAX_IMAGE_SIZE;
+            const warning = document.getElementById('fileSizeWarning');
+            const warningText = document.getElementById('fileSizeWarningText');
+
+            if (file.size > maxSize) {
+                warning.style.display = 'flex';
+                warning.classList.add('file-size-error');
+                warningText.textContent = `File too large! Max size: ${formatFileSize(maxSize)}. Your file: ${formatFileSize(file.size)}`;
+                document.getElementById('uploadBtn').disabled = true;
+            } else if (file.size > maxSize * 0.8) {
+                warning.style.display = 'flex';
+                warning.classList.remove('file-size-error');
+                warningText.textContent = `File is ${Math.round(file.size / maxSize * 100)}% of the ${formatFileSize(maxSize)} limit`;
+                document.getElementById('uploadBtn').disabled = false;
+            } else {
+                warning.style.display = 'none';
+                document.getElementById('uploadBtn').disabled = false;
+            }
+
+            selectedFile = file;
+
+            // Update file info panel
+            document.getElementById('fileUploadArea').style.display = 'none';
+            document.getElementById('fileInfoPanel').style.display = 'block';
+
+            // File name and meta
+            document.getElementById('fileName').textContent = file.name;
+            document.getElementById('fileSize').innerHTML = `📦 ${formatFileSize(file.size)}`;
+            document.getElementById('fileType').innerHTML = `🏷️ ${getFileExtension(file.name)}`;
+
+            // File type icon
+            const iconEl = document.getElementById('fileTypeIcon');
+            if (isVideo) {
+                iconEl.textContent = '🎬';
+                iconEl.className = 'file-type-icon video';
+            } else {
+                iconEl.textContent = '🖼️';
+                iconEl.className = 'file-type-icon image';
+            }
+
+            // Preview
+            const preview = document.getElementById('filePreview');
+            const objectUrl = URL.createObjectURL(file);
+
+            if (isVideo) {
+                preview.innerHTML = `<video src="${objectUrl}" controls preload="metadata"></video>`;
+                // Get video dimensions
+                const video = preview.querySelector('video');
+                video.addEventListener('loadedmetadata', () => {
+                    document.getElementById('fileDimensions').innerHTML = `📐 ${video.videoWidth}×${video.videoHeight}`;
+                });
+            } else {
+                preview.innerHTML = `<img src="${objectUrl}" alt="Preview">`;
+                // Get image dimensions
+                const img = new Image();
+                img.onload = () => {
+                    document.getElementById('fileDimensions').innerHTML = `📐 ${img.naturalWidth}×${img.naturalHeight}`;
+                };
+                img.src = objectUrl;
+            }
+
+            // Update button text with file size
+            document.getElementById('uploadBtnText').textContent = `Upload (${formatFileSize(file.size)})`;
+        }
+
+        // Drag & drop handlers
+        const uploadArea = document.getElementById('fileUploadArea');
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+        uploadArea.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+        });
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file) {
+                // Create a new DataTransfer to set the file input
+                const dt = new DataTransfer();
+                dt.items.add(file);
+                document.getElementById('fileInput').files = dt.files;
+                handleFileSelect({ target: { files: [file] } });
+            }
+        });
+
+        async function handleMediaUpload(e) {
+            e.preventDefault();
+            if (!selectedFile) return;
+
+            const plantId = document.getElementById('mediaPlantId').value;
+            const version = document.getElementById('mediaVersion').value;
+            const notes = document.getElementById('mediaNotes').value;
+
+            // UI Elements
+            const progressDiv = document.getElementById('uploadProgress');
+            const progressFill = document.getElementById('progressFill');
+            const progressPercentage = document.getElementById('progressPercentage');
+            const uploadedSize = document.getElementById('uploadedSize');
+            const uploadSpeed = document.getElementById('uploadSpeed');
+            const uploadBtn = document.getElementById('uploadBtn');
+            const statusText = document.getElementById('uploadStatusText');
+
+            // Show progress and disable button
+            progressDiv.style.display = 'block';
+            uploadBtn.disabled = true;
+            document.getElementById('uploadBtnText').textContent = 'Uploading...';
+
+            const totalSize = selectedFile.size;
+            let startTime = Date.now();
+            let lastLoaded = 0;
+            let lastTime = startTime;
+
+            try {
+                console.log('Starting upload...', { plantId, version, fileName: selectedFile.name, fileSize: selectedFile.size });
+
+                // Use XMLHttpRequest for real progress tracking
+                const uploadResult = await new Promise((resolve, reject) => {
+                    const xhr = new XMLHttpRequest();
+                    const formData = new FormData();
+                    formData.append('file', selectedFile);
+
+                    // Set timeout for large files (10 minutes)
+                    xhr.timeout = 600000;
+
+                    // Track upload progress
+                    xhr.upload.addEventListener('progress', (event) => {
+                        if (event.lengthComputable) {
+                            const percent = Math.round((event.loaded / event.total) * 100);
+                            progressFill.style.width = percent + '%';
+                            progressPercentage.textContent = percent + '%';
+
+                            // Calculate upload speed
+                            const currentTime = Date.now();
+                            const timeDiff = (currentTime - lastTime) / 1000; // seconds
+                            if (timeDiff >= 0.5) { // Update speed every 500ms
+                                const loadedDiff = event.loaded - lastLoaded;
+                                const speed = loadedDiff / timeDiff; // bytes per second
+                                uploadSpeed.textContent = formatFileSize(speed) + '/s';
+                                lastLoaded = event.loaded;
+                                lastTime = currentTime;
+                            }
+
+                            // Update uploaded size
+                            uploadedSize.textContent = `${formatFileSize(event.loaded)} / ${formatFileSize(event.total)}`;
+
+                            // Update status based on progress
+                            if (percent < 30) {
+                                statusText.textContent = 'Starting upload...';
+                            } else if (percent < 70) {
+                                statusText.textContent = 'Uploading...';
+                            } else if (percent < 100) {
+                                statusText.textContent = 'Almost done...';
+                            } else {
+                                statusText.textContent = 'Processing...';
+                            }
+
+                            console.log(`Upload progress: ${percent}%`);
+                        }
+                    });
+
+                    xhr.upload.addEventListener('loadend', () => {
+                        // Upload complete, now waiting for server response
+                        console.log('Upload complete, waiting for server response...');
+                        statusText.textContent = 'Processing on server...';
+                        progressFill.style.width = '100%';
+                        progressPercentage.textContent = '100%';
+                    });
+
+                    xhr.addEventListener('load', () => {
+                        console.log('Server response received:', xhr.status, xhr.responseText.substring(0, 200));
+                        if (xhr.status >= 200 && xhr.status < 300) {
+                            try {
+                                const response = JSON.parse(xhr.responseText);
+                                resolve(response);
+                            } catch (err) {
+                                console.error('Parse error:', err);
+                                reject(new Error('Invalid server response'));
+                            }
+                        } else {
+                            try {
+                                const error = JSON.parse(xhr.responseText);
+                                reject(new Error(error.message || 'Upload failed'));
+                            } catch {
+                                reject(new Error(`Upload failed with status ${xhr.status}`));
+                            }
+                        }
+                    });
+
+                    xhr.addEventListener('error', (e) => {
+                        console.error('XHR error:', e);
+                        reject(new Error('Network error during upload'));
+                    });
+                    xhr.addEventListener('abort', () => reject(new Error('Upload cancelled')));
+                    xhr.addEventListener('timeout', () => reject(new Error('Upload timeout - file may be too large')));
+
+                    xhr.open('POST', `${API_BASE}/upload`);
+                    console.log('Sending file to server...');
+                    xhr.send(formData);
+                });
+
+                if (!uploadResult.success) throw new Error(uploadResult.message);
+
+                // Success state
+                progressDiv.classList.add('upload-success');
+                statusText.textContent = '✓ Upload complete!';
+
+                // Update plant version with media URL
+                const isVideo = selectedFile.type.startsWith('video/');
+                const updateData = { notes };
+                if (isVideo) {
+                    updateData.video = uploadResult.data.url;
+                } else {
+                    updateData.image = uploadResult.data.url;
+                }
+
+                const updateResponse = await fetch(`${API_BASE}/plants/${plantId}/version/${version}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(updateData)
+                });
+
+                const result = await updateResponse.json();
+                if (result.success) {
+                    const uploadTime = ((Date.now() - startTime) / 1000).toFixed(1);
+                    showToast(`${isVideo ? 'Video' : 'Image'} uploaded in ${uploadTime}s!`);
+
+                    // Small delay to show success state
+                    await new Promise(r => setTimeout(r, 500));
+
+                    closeModal('mediaModal');
+                    resetMediaModal();
+                    await loadPlants();
+                    openFullview(plantId);
+                }
+            } catch (error) {
+                showToast('Upload failed: ' + error.message, 'error');
+                progressDiv.classList.remove('upload-success');
+            } finally {
+                progressDiv.style.display = 'none';
+                progressDiv.classList.remove('upload-success');
+                progressFill.style.width = '0%';
+                progressPercentage.textContent = '0%';
+                uploadBtn.disabled = false;
+                document.getElementById('uploadBtnText').textContent = 'Upload';
+            }
+        }
+
+        function showAddPlantModal() {
+            document.getElementById('plantModalTitle').textContent = '🌱 Add New Plant';
+            document.getElementById('plantSubmitBtn').textContent = 'Add Plant';
+            document.getElementById('editPlantId').value = '';
+            showModal('addPlantModal');
+        }
+
+        async function handleAddPlant(e) {
+            e.preventDefault();
+            const editId = document.getElementById('editPlantId').value;
+            const selectedVersion = document.querySelector('input[name="plantVersion"]:checked')?.value || 'v1';
+            const data = {
+                name: document.getElementById('plantName').value,
+                species: document.getElementById('plantSpecies').value,
+                category: document.getElementById('plantCategory').value,
+                location: document.getElementById('plantLocation').value,
+                currentVersion: selectedVersion,
+                versionNotes: document.getElementById('plantVersionNotes').value,
+                isPriority: true
+            };
+
+            try {
+                const url = editId ? `${API_BASE}/plants/${editId}` : `${API_BASE}/plants`;
+                const response = await fetch(url, {
+                    method: editId ? 'PUT' : 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                if (result.success) {
+                    showToast(`Plant added at ${selectedVersion.toUpperCase()}!`);
+                    closeModal('addPlantModal');
+                    loadPlants();
+                }
+            } catch (error) {
+                showToast('Error saving plant', 'error');
+            }
+        }
+
+        async function advancePlant(id) {
+            if (!confirm('Advance to next growth stage?')) return;
+            try {
+                const response = await fetch(`${API_BASE}/plants/${id}/advance`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ notes: 'Advanced to next stage' })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    showToast(result.message);
+                    loadPlants();
+                }
+            } catch (error) {
+                showToast('Error advancing plant', 'error');
+            }
+        }
+
+        async function deletePlant(id) {
+            if (!confirm('Delete this plant?')) return;
+            try {
+                await fetch(`${API_BASE}/plants/${id}`, { method: 'DELETE' });
+                showToast('Plant deleted!');
+                loadPlants();
+            } catch (error) {
+                showToast('Error deleting plant', 'error');
+            }
+        }
+
+        // Delete media (image or video) from a version
+        async function deleteMedia(plantId, version, mediaType) {
+            if (!confirm(`Delete this ${mediaType}?`)) return;
+            try {
+                const response = await fetch(`${API_BASE}/plants/${plantId}/version/${version}/media/${mediaType}`, {
+                    method: 'DELETE'
+                });
+                const result = await response.json();
+                if (result.success) {
+                    showToast(`${mediaType.charAt(0).toUpperCase() + mediaType.slice(1)} deleted!`);
+                    await loadPlants();
+                    openFullview(plantId);
+                } else {
+                    showToast(result.message || 'Error deleting media', 'error');
+                }
+            } catch (error) {
+                console.error('Delete media error:', error);
+                showToast('Error deleting media', 'error');
+            }
+        }
+
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeFullview(); });
+
+        if (checkAuth()) {
+            loadPlants().then(() => {
+                // Check if we need to auto-open a plant from home page navigation
+                const openPlantId = localStorage.getItem('openPlantId');
+                if (openPlantId) {
+                    localStorage.removeItem('openPlantId');
+                    // Small delay to ensure plants are loaded
+                    setTimeout(() => openFullview(openPlantId), 300);
+                }
+            });
+        }
+    </script>
+    <script>
+        // Fetch and display disk usage (admin view)
+        async function updateDiskSpace() {
+            try {
+                const response = await fetch('/api/system/disk');
+                if (!response.ok) throw new Error('Network response was not ok');
+                const data = await response.json();
+
+                const formatSize = (bytes) => {
+                    if (bytes === 0) return '0 B';
+                    const k = 1024, sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+                    const i = Math.floor(Math.log(bytes) / Math.log(k));
+                    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+                };
+
+                const freeEl = document.getElementById('diskFreeSpace');
+                const indicatorEl = document.getElementById('diskSpaceIndicator');
+
+                if (freeEl && indicatorEl) {
+                    freeEl.textContent = formatSize(data.free) + ' free';
+                    indicatorEl.title = `Total: ${formatSize(data.total)}`;
+                }
+            } catch (e) {
+                console.error('Disk check failed', e);
+                const freeEl = document.getElementById('diskFreeSpace');
+                if (freeEl) freeEl.textContent = 'Unknown';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', updateDiskSpace);
+        updateDiskSpace();
+    </script>
+</body>
+
+</html>

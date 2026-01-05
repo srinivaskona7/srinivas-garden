@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Manage your plant collection with Sri's Garden">
+    <title>
+        <%= title %> | Sri's Garden
+    </title>
+  <link rel="icon" type="image/png" href="/images/favicon.png">
+  <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="nav-logo">
+                <span class="logo-icon">🌿</span>
+                <span class="logo-text">Sri's Garden</span>
+            </a>
+            <ul class="nav-menu">
+                <li><a href="/changelog" class="nav-link">📜 Changelog</a></li>
+                <li><a href="/" class="nav-link">Home</a></li>
+                <li><a href="/plants" class="nav-link active">My Plants</a></li>
+                <li><a href="/garden" class="nav-link">Gardens</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="page-content">
+        <div class="container">
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">🌱 My Plants</h1>
+                    <p class="page-subtitle">Manage and care for your plant collection</p>
+                </div>
+                <button class="btn btn-primary" onclick="showAddPlantModal()">
+                    <span>➕</span> Add Plant
+                </button>
+            </div>
+
+            <!-- Filter Section -->
+            <div class="filter-section">
+                <div class="filter-group">
+                    <label for="filterLocation">Location</label>
+                    <select id="filterLocation" onchange="filterPlants()">
+                        <option value="">All Locations</option>
+                        <option value="indoor">Indoor</option>
+                        <option value="outdoor">Outdoor</option>
+                        <option value="greenhouse">Greenhouse</option>
+                        <option value="balcony">Balcony</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="filterHealth">Health Status</label>
+                    <select id="filterHealth" onchange="filterPlants()">
+                        <option value="">All Status</option>
+                        <option value="excellent">Excellent</option>
+                        <option value="good">Good</option>
+                        <option value="fair">Fair</option>
+                        <option value="poor">Poor</option>
+                        <option value="critical">Critical</option>
+                    </select>
+                </div>
+                <div class="filter-group search-group">
+                    <label for="searchPlants">Search</label>
+                    <input type="text" id="searchPlants" placeholder="Search plants..." oninput="filterPlants()">
+                </div>
+            </div>
+
+            <!-- Plants Grid -->
+            <div class="plants-grid" id="plantsGrid">
+                <% if (plants && plants.length> 0) { %>
+                    <% plants.forEach(plant=> { %>
+                        <div class="plant-card" data-id="<%= plant._id %>" data-location="<%= plant.location %>"
+                            data-health="<%= plant.healthStatus %>">
+                            <div class="plant-card-header">
+                                <div class="plant-avatar">
+                                    <% if (plant.location==='indoor' ) { %>🪴
+                                        <% } else if (plant.location==='outdoor' ) { %>🌳
+                                            <% } else if (plant.location==='greenhouse' ) { %>🌿
+                                                <% } else { %>🌱<% } %>
+                                </div>
+                                <div class="plant-health health-<%= plant.healthStatus %>">
+                                    <%= plant.healthStatus.charAt(0).toUpperCase() + plant.healthStatus.slice(1) %>
+                                </div>
+                            </div>
+                            <div class="plant-card-body">
+                                <h3 class="plant-name">
+                                    <%= plant.name %>
+                                </h3>
+                                <p class="plant-species">
+                                    <%= plant.species || 'Unknown species' %>
+                                </p>
+                                <div class="plant-details">
+                                    <div class="plant-detail">
+                                        <span class="detail-icon">💧</span>
+                                        <span>
+                                            <%= plant.wateringFrequency.replace('-', ' ' ) %>
+                                        </span>
+                                    </div>
+                                    <div class="plant-detail">
+                                        <span class="detail-icon">☀️</span>
+                                        <span>
+                                            <%= plant.sunlight.replace('-', ' ' ) %>
+                                        </span>
+                                    </div>
+                                    <div class="plant-detail">
+                                        <span class="detail-icon">📍</span>
+                                        <span>
+                                            <%= plant.location.charAt(0).toUpperCase() + plant.location.slice(1) %>
+                                        </span>
+                                    </div>
+                                </div>
+                                <% if (plant.nextWatering) { %>
+                                    <div
+                                        class="watering-status <%= new Date(plant.nextWatering) <= new Date() ? 'needs-water' : '' %>">
+                                        <% if (new Date(plant.nextWatering) <=new Date()) { %>
+                                            💧 Needs watering now!
+                                            <% } else { %>
+                                                Next watering: <%= new Date(plant.nextWatering).toLocaleDateString() %>
+                                                    <% } %>
+                                    </div>
+                                    <% } %>
+                            </div>
+                            <div class="plant-card-actions">
+                                <button class="btn-icon" onclick="waterPlant('<%= plant._id %>')"
+                                    title="Water this plant">
+                                    💧
+                                </button>
+                                <button class="btn-icon" onclick="editPlant('<%= plant._id %>')" title="Edit plant">
+                                    ✏️
+                                </button>
+                                <button class="btn-icon btn-danger" onclick="deletePlant('<%= plant._id %>')"
+                                    title="Delete plant">
+                                    🗑️
+                                </button>
+                            </div>
+                        </div>
+                        <% }) %>
+                            <% } else { %>
+                                <div class="empty-state">
+                                    <div class="empty-icon">🌱</div>
+                                    <h3>No plants yet</h3>
+                                    <p>Start your garden journey by adding your first plant!</p>
+                                    <button class="btn btn-primary" onclick="showAddPlantModal()">
+                                        Add Your First Plant
+                                    </button>
+                                </div>
+                                <% } %>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add/Edit Plant Modal -->
+    <div id="addPlantModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="plantModalTitle">🌱 Add New Plant</h2>
+                <button class="modal-close" onclick="closeModal('addPlantModal')">&times;</button>
+            </div>
+            <form id="addPlantForm" onsubmit="handleAddPlant(event)">
+                <input type="hidden" id="editPlantId" name="editId">
+                <div class="form-group">
+                    <label for="plantName">Plant Name *</label>
+                    <input type="text" id="plantName" name="name" required placeholder="e.g., My Rose Bush">
+                </div>
+                <div class="form-group">
+                    <label for="plantSpecies">Species</label>
+                    <input type="text" id="plantSpecies" name="species" placeholder="e.g., Rosa gallica">
+                </div>
+                <div class="form-group">
+                    <label for="plantDescription">Description</label>
+                    <textarea id="plantDescription" name="description" rows="2"
+                        placeholder="Describe your plant..."></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="wateringFrequency">Watering Frequency</label>
+                        <select id="wateringFrequency" name="wateringFrequency">
+                            <option value="daily">Daily</option>
+                            <option value="every-2-days">Every 2 Days</option>
+                            <option value="every-3-days">Every 3 Days</option>
+                            <option value="weekly" selected>Weekly</option>
+                            <option value="bi-weekly">Bi-Weekly</option>
+                            <option value="monthly">Monthly</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="sunlight">Sunlight</label>
+                        <select id="sunlight" name="sunlight">
+                            <option value="full-sun">Full Sun</option>
+                            <option value="partial-sun" selected>Partial Sun</option>
+                            <option value="partial-shade">Partial Shade</option>
+                            <option value="full-shade">Full Shade</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <select id="location" name="location">
+                            <option value="indoor" selected>Indoor</option>
+                            <option value="outdoor">Outdoor</option>
+                            <option value="greenhouse">Greenhouse</option>
+                            <option value="balcony">Balcony</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="healthStatus">Health Status</label>
+                        <select id="healthStatus" name="healthStatus">
+                            <option value="excellent">Excellent</option>
+                            <option value="good" selected>Good</option>
+                            <option value="fair">Fair</option>
+                            <option value="poor">Poor</option>
+                            <option value="critical">Critical</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="careNotes">Care Notes</label>
+                    <textarea id="careNotes" name="careNotes" rows="3"
+                        placeholder="Any special care instructions..."></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary"
+                        onclick="closeModal('addPlantModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="plantSubmitBtn">Add Plant</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Sri's Garden. Made with 💚 for plant lovers.</p>
+        </div>
+    </footer>
+
+    <script src="/js/app.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,374 @@
+{
+  "plants": [
+    {
+      "_id": "plants_1767421702646_1",
+      "name": "Spinach",
+      "species": "Spinacia oleracea",
+      "description": "Nutritious leafy green, rich in iron",
+      "category": "leafy-vegetable",
+      "isPriority": true,
+      "wateringFrequency": "daily",
+      "sunlight": "partial-sun",
+      "location": "outdoor",
+      "healthStatus": "excellent",
+      "careNotes": "Keep soil moist. Harvest outer leaves first.",
+      "currentVersion": "v4",
+      "versions": {
+        "v1": {
+          "name": "Prepared Soil",
+          "description": "Soil prepared, ready for sowing",
+          "image": "/uploads/1767421787926-68n5cn.jpeg",
+          "date": "2026-01-03T06:29:47.959Z",
+          "notes": "",
+          "video": null
+        },
+        "v2": {
+          "name": "Sprouts",
+          "description": "Seeds germinated, small sprouts visible",
+          "image": "/uploads/1767422177197-lacq0c.jpeg",
+          "date": "2026-01-03T06:36:17.223Z",
+          "notes": ""
+        },
+        "v3": {
+          "name": "Growing",
+          "description": "Medium sized leaves, growing well",
+          "image": "/uploads/1767422184177-04datr.jpeg",
+          "date": "2026-01-03T06:36:24.195Z",
+          "notes": ""
+        },
+        "v4": {
+          "name": "Ready to Harvest",
+          "description": "Fully grown, ready for harvest",
+          "image": "/uploads/1767422222492-ox8956.jpeg",
+          "date": "2026-01-03T06:37:02.520Z",
+          "notes": "",
+          "video": null
+        }
+      },
+      "plantedDate": "2025-12-04T06:28:22.646Z",
+      "expectedHarvestDate": "2026-01-18T06:28:22.646Z",
+      "createdAt": "2026-01-03T06:28:22.645Z",
+      "updatedAt": "2026-01-03T06:56:04.277Z"
+    },
+    {
+      "_id": "plants_1767421702646_2",
+      "name": "Lettuce",
+      "species": "Lactuca sativa",
+      "description": "Crisp salad green, fast growing",
+      "category": "leafy-vegetable",
+      "isPriority": true,
+      "wateringFrequency": "daily",
+      "sunlight": "partial-sun",
+      "location": "outdoor",
+      "healthStatus": "good",
+      "careNotes": "Keep cool, water regularly",
+      "currentVersion": "v2",
+      "versions": {
+        "v1": {
+          "name": "Prepared Soil",
+          "description": "Soil prepared for planting",
+          "image": null,
+          "date": "2025-12-20T06:28:22.646Z",
+          "notes": "Soil enriched with organic matter"
+        },
+        "v2": {
+          "name": "Sprouts",
+          "description": "Small sprouts emerging",
+          "image": null,
+          "date": "2025-12-27T06:28:22.646Z",
+          "notes": "Healthy sprouts, good germination rate"
+        },
+        "v3": {
+          "name": "Growing",
+          "description": "Medium growth",
+          "image": null,
+          "date": null,
+          "notes": null
+        },
+        "v4": {
+          "name": "Ready to Harvest",
+          "description": "Fully grown",
+          "image": null,
+          "date": null,
+          "notes": null
+        }
+      },
+      "plantedDate": "2025-12-20T06:28:22.646Z",
+      "expectedHarvestDate": "2026-01-24T06:28:22.646Z",
+      "createdAt": "2026-01-03T06:28:22.645Z",
+      "updatedAt": "2026-01-03T06:28:22.645Z"
+    },
+    {
+      "_id": "plants_1767421702646_3",
+      "name": "Coriander",
+      "species": "Coriandrum sativum",
+      "description": "Aromatic herb for cooking",
+      "category": "leafy-vegetable",
+      "isPriority": true,
+      "wateringFrequency": "daily",
+      "sunlight": "partial-shade",
+      "location": "indoor",
+      "healthStatus": "excellent",
+      "careNotes": "Keep soil consistently moist",
+      "currentVersion": "v4",
+      "versions": {
+        "v1": {
+          "name": "Prepared Soil",
+          "description": "Container prepared",
+          "image": null,
+          "date": "2025-11-19T06:28:22.646Z",
+          "notes": "Used potting mix"
+        },
+        "v2": {
+          "name": "Sprouts",
+          "description": "Seeds sprouting",
+          "image": null,
+          "date": "2025-11-29T06:28:22.646Z",
+          "notes": "Good germination"
+        },
+        "v3": {
+          "name": "Growing",
+          "description": "Leaves developing",
+          "image": null,
+          "date": "2025-12-14T06:28:22.646Z",
+          "notes": "Thinned and growing well"
+        },
+        "v4": {
+          "name": "Ready to Harvest",
+          "description": "Full size, harvesting regularly",
+          "image": null,
+          "date": "2025-12-29T06:28:22.646Z",
+          "notes": "Harvesting leaves as needed"
+        }
+      },
+      "plantedDate": "2025-11-19T06:28:22.646Z",
+      "expectedHarvestDate": "2025-12-29T06:28:22.646Z",
+      "createdAt": "2026-01-03T06:28:22.645Z",
+      "updatedAt": "2026-01-03T06:28:22.645Z"
+    },
+    {
+      "_id": "plants_1767421702646_4",
+      "name": "Mint",
+      "species": "Mentha",
+      "description": "Refreshing herb, grows vigorously",
+      "category": "leafy-vegetable",
+      "isPriority": true,
+      "wateringFrequency": "daily",
+      "sunlight": "partial-shade",
+      "location": "indoor",
+      "healthStatus": "excellent",
+      "careNotes": "Keep contained, spreads quickly",
+      "currentVersion": "v4",
+      "versions": {
+        "v1": {
+          "name": "Prepared Soil",
+          "description": "Container ready",
+          "image": null,
+          "date": "2026-01-03T06:56:34.887Z",
+          "notes": "",
+          "video": "/uploads/1767423393769-wjy0vr.mp4"
+        },
+        "v2": {
+          "name": "Sprouts",
+          "description": "New growth",
+          "image": "/uploads/1767423401265-s5enof.jpeg",
+          "date": "2026-01-03T06:56:41.284Z",
+          "notes": ""
+        },
+        "v3": {
+          "name": "Growing",
+          "description": "Spreading",
+          "image": null,
+          "date": "2025-12-04T06:28:22.646Z",
+          "notes": "Growing vigorously"
+        },
+        "v4": {
+          "name": "Ready to Harvest",
+          "description": "Fully established",
+          "image": null,
+          "date": "2025-12-24T06:28:22.646Z",
+          "notes": "Regular harvesting"
+        }
+      },
+      "plantedDate": "2025-11-04T06:28:22.646Z",
+      "createdAt": "2026-01-03T06:28:22.645Z",
+      "updatedAt": "2026-01-03T06:56:41.284Z",
+      "expectedHarvestDate": null
+    },
+    {
+      "_id": "plants_1767421702646_5",
+      "name": "Methi (Fenugreek)",
+      "species": "Trigonella foenum-graecum",
+      "description": "Popular Indian leafy vegetable",
+      "category": "leafy-vegetable",
+      "isPriority": true,
+      "wateringFrequency": "daily",
+      "sunlight": "full-sun",
+      "location": "outdoor",
+      "healthStatus": "good",
+      "careNotes": "Fast growing, harvest in 3-4 weeks",
+      "currentVersion": "v1",
+      "versions": {
+        "v1": {
+          "name": "Prepared Soil",
+          "description": "Ready for sowing",
+          "image": null,
+          "date": "2026-01-03T06:28:22.645Z",
+          "notes": "Soil prepared today"
+        },
+        "v2": {
+          "name": "Sprouts",
+          "description": "Awaiting germination",
+          "image": null,
+          "date": null,
+          "notes": null
+        },
+        "v3": {
+          "name": "Growing",
+          "description": "Not yet",
+          "image": null,
+          "date": null,
+          "notes": null
+        },
+        "v4": {
+          "name": "Ready to Harvest",
+          "description": "Not yet",
+          "image": null,
+          "date": null,
+          "notes": null
+        }
+      },
+      "plantedDate": "2026-01-03T06:28:22.645Z",
+      "expectedHarvestDate": "2026-01-28T06:28:22.646Z",
+      "createdAt": "2026-01-03T06:28:22.645Z",
+      "updatedAt": "2026-01-03T06:28:22.645Z"
+    },
+    {
+      "_id": "plants_1767421702646_6",
+      "name": "Palak (Indian Spinach)",
+      "species": "Beta vulgaris",
+      "description": "Popular leafy green for Indian dishes",
+      "category": "leafy-vegetable",
+      "isPriority": true,
+      "wateringFrequency": "daily",
+      "sunlight": "partial-sun",
+      "location": "outdoor",
+      "healthStatus": "excellent",
+      "careNotes": "Multiple harvests possible",
+      "currentVersion": "v2",
+      "versions": {
+        "v1": {
+          "name": "Prepared Soil",
+          "description": "Bed prepared",
+          "image": null,
+          "date": "2025-12-24T06:28:22.646Z",
+          "notes": "Added manure"
+        },
+        "v2": {
+          "name": "Sprouts",
+          "description": "Seedlings emerging",
+          "image": null,
+          "date": "2025-12-29T06:28:22.646Z",
+          "notes": "Good germination"
+        },
+        "v3": {
+          "name": "Growing",
+          "description": "Not yet",
+          "image": null,
+          "date": null,
+          "notes": null
+        },
+        "v4": {
+          "name": "Ready to Harvest",
+          "description": "Not yet",
+          "image": null,
+          "date": null,
+          "notes": null
+        }
+      },
+      "plantedDate": "2025-12-24T06:28:22.646Z",
+      "expectedHarvestDate": "2026-01-23T06:28:22.646Z",
+      "createdAt": "2026-01-03T06:28:22.645Z",
+      "updatedAt": "2026-01-03T06:28:22.645Z"
+    }
+  ],
+  "gardens": [
+    {
+      "_id": "gardens_1767421702646_1",
+      "name": "Kitchen Garden",
+      "description": "Daily use leafy vegetables",
+      "location": "backyard",
+      "size": "medium",
+      "gardenType": "vegetable",
+      "plants": [
+        "plants_1767421702646_1",
+        "plants_1767421702646_2",
+        "plants_1767421702646_5",
+        "plants_1767421702646_6"
+      ],
+      "isActive": true,
+      "createdAt": "2026-01-03T06:28:22.645Z",
+      "updatedAt": "2026-01-03T06:28:22.645Z"
+    },
+    {
+      "_id": "gardens_1767421702647_2",
+      "name": "Herb Corner",
+      "description": "Fresh herbs for cooking",
+      "location": "indoor",
+      "size": "small",
+      "gardenType": "herb",
+      "plants": [
+        "plants_1767421702646_3",
+        "plants_1767421702646_4"
+      ],
+      "isActive": true,
+      "createdAt": "2026-01-03T06:28:22.645Z",
+      "updatedAt": "2026-01-03T06:28:22.645Z"
+    }
+  ],
+  "layouts": [
+    {
+      "_id": "layouts_1767421702646_1",
+      "name": "Leafy Greens Bed A",
+      "description": "Main bed for spinach and lettuce",
+      "image": "/images/hero-image.jpg",
+      "size": "large",
+      "cropType": "leafy-vegetables",
+      "position": 1,
+      "isActive": true,
+      "createdAt": "2026-01-03T06:28:22.645Z",
+      "updatedAt": "2026-01-03T06:28:22.645Z"
+    },
+    {
+      "_id": "layouts_1767421702646_2",
+      "name": "Herb Garden",
+      "description": "Coriander, mint, and other herbs",
+      "image": null,
+      "size": "medium",
+      "cropType": "herbs",
+      "position": 2,
+      "isActive": true,
+      "createdAt": "2026-01-03T06:28:22.645Z",
+      "updatedAt": "2026-01-03T06:28:22.645Z"
+    },
+    {
+      "_id": "layouts_1767421702646_3",
+      "name": "Microgreens Tray",
+      "description": "Fast growing microgreens",
+      "image": null,
+      "size": "small",
+      "cropType": "microgreens",
+      "position": 3,
+      "isActive": true,
+      "createdAt": "2026-01-03T06:28:22.645Z",
+      "updatedAt": "2026-01-03T06:28:22.645Z"
+    }
+  ],
+  "idCounters": {
+    "users": 2,
+    "layouts": 4,
+    "plants": 7,
+    "gardens": 3
+  },
+  "savedAt": "2026-01-03T06:56:41.284Z"
+}

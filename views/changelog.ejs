@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= title %> | Sri's Garden
+    </title>
+    <link rel="icon" type="image/png" href="/images/favicon.png">
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .changelog-container {
+            max-width: 800px;
+            margin: 40px auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            padding: 40px;
+        }
+
+        .changelog-content h1 {
+            color: #064e3b;
+            font-family: 'Playfair Display', serif;
+            border-bottom: 2px solid #ecfdf5;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+
+        .changelog-content h2 {
+            color: #065f46;
+            margin-top: 30px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .changelog-content h3 {
+            color: #10b981;
+            margin-top: 20px;
+            font-size: 1.1rem;
+        }
+
+        .changelog-content ul {
+            padding-left: 20px;
+            color: #4b5563;
+        }
+
+        .changelog-content li {
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+
+        .changelog-content code {
+            background: #f3f4f6;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            color: #dc2626;
+        }
+
+        .changelog-content strong {
+            color: #1f2937;
+        }
+
+        .breadcrumb {
+            margin-bottom: 20px;
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        .breadcrumb a {
+            color: #10b981;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        /* Version Tags */
+        .changelog-content h2 strong {
+            font-weight: 700;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="nav-logo">
+                <span class="logo-icon">🌿</span>
+                <span class="logo-text">Sri's Garden</span>
+            </a>
+            <ul class="nav-menu">
+                <li><a href="/changelog" class="nav-link">📜 Changelog</a></li>
+                <li><a href="/" class="nav-link">Home</a></li>
+                <li><a href="/login" class="nav-link btn btn-sm btn-primary">Login</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main>
+        <div class="container">
+            <div class="changelog-container">
+                <div class="breadcrumb">
+                    <a href="/">Home</a> > Changelog
+                </div>
+                <div class="changelog-content">
+                    <%- content %>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Sri's Garden. Made with 💚</p>
+        </div>
+    </footer>
+</body>
+
+</html>

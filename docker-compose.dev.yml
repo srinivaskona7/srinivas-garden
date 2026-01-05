@@ -1,0 +1,64 @@
+version: '3.8'
+
+# Development compose - mounts source code for hot reload
+services:
+  # Beautiful Garden Application (Development Mode)
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: beautiful-garden-dev
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - MONGODB_URI=mongodb://garden:garden123@mongodb:27017/beautiful-garden?authSource=beautiful-garden
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    volumes:
+      # Mount source code for hot reload
+      - ./server.js:/app/server.js
+      - ./config:/app/config
+      - ./models:/app/models
+      - ./routes:/app/routes
+      - ./views:/app/views
+      - ./public:/app/public
+      - ./backups:/app/backups
+      # Don't mount node_modules
+      - /app/node_modules
+    networks:
+      - garden-network
+
+  # MongoDB Database
+  mongodb:
+    image: mongo:7
+    container_name: beautiful-garden-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=rootpassword
+      - MONGO_INITDB_DATABASE=beautiful-garden
+    volumes:
+      - mongodb-data:/data/db
+      - ./scripts/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    healthcheck:
+      test: [ "CMD", "mongosh", "--eval", "db.adminCommand('ping')" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - garden-network
+
+volumes:
+  mongodb-data:
+    driver: local
+
+networks:
+  garden-network:
+    driver: bridge
