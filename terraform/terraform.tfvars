@@ -1,0 +1,6 @@
+globalaccount        = "b7c69d30trial-ga"
+region               = "us10"
+subaccount_name      = "my-kyma-cluster-subaccount"
+subaccount_subdomain = "my-kyma-cluster-sd"
+kyma_instance_name   = "my-kyma-cluster"
+kyma_plan            = "trial"

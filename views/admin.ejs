@@ -7,8 +7,8 @@
     <title>
         <%= title %> | Sri's Garden
     </title>
-  <link rel="icon" type="image/png" href="/images/favicon.png">
-  <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="icon" type="image/png" href="/images/favicon.png">
+    <link rel="apple-touch-icon" href="/images/favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap"
@@ -554,6 +554,10 @@
             background: linear-gradient(135deg, #dbeafe 0%, #93c5fd 100%);
         }
 
+        .file-type-icon.file {
+            background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%);
+        }
+
         .file-details {
             flex: 1;
         }
@@ -871,7 +875,7 @@
     <div id="mediaModal" class="modal">
         <div class="modal-content" style="max-width: 500px;">
             <div class="modal-header">
-                <h2 id="mediaModalTitle">📸 Add Photo/Video</h2>
+                <h2 id="mediaModalTitle">📎 Add Media/File</h2>
                 <button class="modal-close" onclick="closeModal('mediaModal')">&times;</button>
             </div>
             <form id="mediaForm" onsubmit="handleMediaUpload(event)">
@@ -884,10 +888,12 @@
                     <div class="text">
                         <span>Click to upload</span> or drag & drop<br>
                         <small style="color: #9ca3af;">Images: JPG, PNG, GIF, WEBP (max 10MB)</small><br>
-                        <small style="color: #9ca3af;">Videos: MP4, MOV, WEBM (max 1GB)</small>
+                        <small style="color: #9ca3af;">Videos: MP4, MOV, WEBM (max 1GB)</small><br>
+                        <small style="color: #9ca3af;">Files: PDF, Word, Excel, PowerPoint, ZIP</small>
                     </div>
-                    <input type="file" id="fileInput" accept="image/*,video/*" style="display: none;"
-                        onchange="handleFileSelect(event)">
+                    <input type="file" id="fileInput"
+                        accept="image/*,video/*,.pdf,.doc,.docx,.txt,.xlsx,.xls,.csv,.pptx,.ppt,.zip"
+                        style="display: none;" onchange="handleFileSelect(event)">
                 </div>
 
                 <!-- File Info Panel (hidden until file selected) -->
@@ -1008,76 +1014,77 @@
             return '';
         }
 
-        function loadPlants() {
-            fetch(`${API_BASE}/plants`)
-                .then(res => res.json())
-                .then(result => {
-                    const grid = document.getElementById('plantsGrid');
-                    plantsData = result.data || [];
-                    let plants = [...plantsData];
+        async function loadPlants() {
+            try {
+                const res = await fetch(`${API_BASE}/plants`);
+                const result = await res.json();
+                const grid = document.getElementById('plantsGrid');
+                plantsData = result.data || [];
+                let plants = [...plantsData];
 
-                    if (currentFilter !== 'all') {
-                        plants = plants.filter(p => p.currentVersion === currentFilter);
-                    }
+                if (currentFilter !== 'all') {
+                    plants = plants.filter(p => p.currentVersion === currentFilter);
+                }
 
-                    if (plants.length > 0) {
-                        grid.innerHTML = plants.map(plant => {
-                            // Build version thumbnails matching Public UI
-                            const mediaThumbs = ['v1', 'v2', 'v3', 'v4'].filter(v =>
-                                plant.versions?.[v]?.image || plant.versions?.[v]?.video
-                            );
+                if (plants.length > 0) {
+                    grid.innerHTML = plants.map(plant => {
+                        // Build version thumbnails matching Public UI
+                        const mediaThumbs = ['v1', 'v2', 'v3', 'v4'].filter(v =>
+                            plant.versions?.[v]?.image || plant.versions?.[v]?.video || plant.versions?.[v]?.file
+                        );
 
-                            const thumbnailsHtml = mediaThumbs.length > 0 ?
-                                `<div class="version-thumbnails">
-                                    ${mediaThumbs.map(v => `
-                                        <div class="version-thumb" title="${v.toUpperCase()} media">
-                                            ${plant.versions[v].image ?
-                                        `<img src="${plant.versions[v].image}" alt="${v}">` :
-                                        `<span class="video-indicator">🎬</span>`}
-                                            <span class="thumb-label">${v.toUpperCase()}</span>
-                                        </div>
-                                    `).join('')}
-                                </div>` : '';
-
-                            // Icons map
-                            const icons = { v1: '🌱', v2: '🌿', v3: '🪴', v4: '🥬' };
-                            const versionIcon = icons[plant.currentVersion] || '🌱';
-
-                            return `
-                                <div class="plant-growth-card" data-id="${plant._id}" onclick="openFullview('${plant._id}')">
-                                    <div class="plant-growth-header">
-                                        <h4>${versionIcon} ${plant.name}</h4>
-                                        <div class="species">${plant.species || plant.category || 'Leafy Vegetable'}</div>
+                        const thumbnailsHtml = mediaThumbs.length > 0 ?
+                            `<div class="version-thumbnails">
+                                ${mediaThumbs.map(v => `
+                                    <div class="version-thumb" title="${v.toUpperCase()} media">
+                                        ${plant.versions[v].image ?
+                                    `<img src="${plant.versions[v].image}" alt="${v}">` :
+                                    (plant.versions[v].video ? `<span class="video-indicator">🎬</span>` : `<span class="video-indicator">📄</span>`)}
+                                        <span class="thumb-label">${v.toUpperCase()}</span>
                                     </div>
-                                    <div class="plant-growth-body">
-                                        <div class="version-progress">
-                                            <div class="version-step ${getVersionClass(plant.currentVersion, 'v1')}"><div class="step-icon">🌱</div><div class="step-label">V1</div></div>
-                                            <div class="version-step ${getVersionClass(plant.currentVersion, 'v2')}"><div class="step-icon">🌿</div><div class="step-label">V2</div></div>
-                                            <div class="version-step ${getVersionClass(plant.currentVersion, 'v3')}"><div class="step-icon">🪴</div><div class="step-label">V3</div></div>
-                                            <div class="version-step ${getVersionClass(plant.currentVersion, 'v4')}"><div class="step-icon">🥬</div><div class="step-label">V4</div></div>
-                                        </div>
-                                        
-                                        ${thumbnailsHtml}
-                                        
-                                        <p style="font-size: 13px; color: #6b7280; margin-bottom: 8px;">
-                                            ${plant.versions?.[plant.currentVersion]?.notes || 'Click to view details'}
-                                        </p>
-                                        <span class="version-badge version-${plant.currentVersion}">${plant.currentVersion.toUpperCase()}</span>
-                                    </div>
-                                    <div class="plant-card-actions" onclick="event.stopPropagation()">
-                                        <button class="btn-advance" onclick="advancePlant('${plant._id}')" ${plant.currentVersion === 'v4' ? 'disabled' : ''}>
-                                            ${plant.currentVersion === 'v4' ? '✓ Ready' : '⬆️ Advance'}
-                                        </button>
-                                        <button class="btn-icon btn-danger" onclick="deletePlant('${plant._id}')" title="Delete">🗑️</button>
-                                    </div>
+                                `).join('')}
+                            </div>` : '';
+
+                        // Icons map
+                        const icons = { v1: '🌱', v2: '🌿', v3: '🪴', v4: '🥬' };
+                        const versionIcon = icons[plant.currentVersion] || '🌱';
+
+                        return `
+                            <div class="plant-growth-card" data-id="${plant._id}" onclick="openFullview('${plant._id}')">
+                                <div class="plant-growth-header">
+                                    <h4>${versionIcon} ${plant.name}</h4>
+                                    <div class="species">${plant.species || plant.category || 'Leafy Vegetable'}</div>
                                 </div>
-                            `;
-                        }).join('');
-                    } else {
-                        grid.innerHTML = '<div class="empty-message"><p>No plants found. Add your first leafy vegetable!</p></div>';
-                    }
-                })
-                .catch(error => console.error('Error loading plants:', error));
+                                <div class="plant-growth-body">
+                                    <div class="version-progress">
+                                        <div class="version-step ${getVersionClass(plant.currentVersion, 'v1')}"><div class="step-icon">🌱</div><div class="step-label">V1</div></div>
+                                        <div class="version-step ${getVersionClass(plant.currentVersion, 'v2')}"><div class="step-icon">🌿</div><div class="step-label">V2</div></div>
+                                        <div class="version-step ${getVersionClass(plant.currentVersion, 'v3')}"><div class="step-icon">🪴</div><div class="step-label">V3</div></div>
+                                        <div class="version-step ${getVersionClass(plant.currentVersion, 'v4')}"><div class="step-icon">🥬</div><div class="step-label">V4</div></div>
+                                    </div>
+                                    
+                                    ${thumbnailsHtml}
+                                    
+                                    <p style="font-size: 13px; color: #6b7280; margin-bottom: 8px;">
+                                        ${plant.versions?.[plant.currentVersion]?.notes || 'Click to view details'}
+                                    </p>
+                                    <span class="version-badge version-${plant.currentVersion}">${plant.currentVersion.toUpperCase()}</span>
+                                </div>
+                                <div class="plant-card-actions" onclick="event.stopPropagation()">
+                                    <button class="btn-advance" onclick="advancePlant('${plant._id}')" ${plant.currentVersion === 'v4' ? 'disabled' : ''}>
+                                        ${plant.currentVersion === 'v4' ? '✓ Ready' : '⬆️ Advance'}
+                                    </button>
+                                    <button class="btn-icon btn-danger" onclick="deletePlant('${plant._id}')" title="Delete">🗑️</button>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                } else {
+                    grid.innerHTML = '<div class="empty-message"><p>No plants found. Add your first leafy vegetable!</p></div>';
+                }
+            } catch (error) {
+                console.error('Error loading plants:', error);
+            }
         }
 
         function openFullview(plantId) {
@@ -1106,8 +1113,9 @@
                 const status = idx < currentIdx ? 'done' : (idx === currentIdx ? 'current' : 'pending');
                 const hasVideo = vData.video;
                 const hasImage = vData.image;
+                const hasFile = vData.file;
 
-                // Build media content - show both if both exist
+                // Build media content - show all if they exist
                 let mediaContent = '';
                 if (hasImage) {
                     mediaContent += `
@@ -1141,7 +1149,36 @@
                         <span class="media-type-badge">🎬 Video</span>
                       </div>`;
                 }
-                if (!hasImage && !hasVideo) {
+                if (hasFile) {
+                    const fileName = vData.fileName || 'Document';
+                    const fileExt = fileName.split('.').pop().toLowerCase();
+                    const isPdf = fileExt === 'pdf';
+                    const docIcons = {
+                        'pdf': '📄', 'doc': '📝', 'docx': '📝',
+                        'xls': '📊', 'xlsx': '📊', 'csv': '📊',
+                        'ppt': '📽️', 'pptx': '📽️',
+                        'txt': '📃', 'zip': '📦'
+                    };
+                    const fileIcon = docIcons[fileExt] || '📁';
+
+                    mediaContent += `
+                      <div class="media-item" style="position: relative;">
+                        ${isPdf ?
+                            `<iframe src="${vData.file}" style="width: 100%; height: 200px; border: none; border-radius: 8px;" title="${fileName}"></iframe>` :
+                            `<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 150px; background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%); border-radius: 8px;">
+                                <div style="font-size: 48px; margin-bottom: 8px;">${fileIcon}</div>
+                                <div style="font-size: 12px; color: #374151; font-weight: 500; text-align: center; padding: 0 16px; word-break: break-word;">${fileName}</div>
+                            </div>`
+                        }
+                        <div class="media-actions" style="position: absolute; top: 8px; right: 8px; display: flex; gap: 8px; z-index: 20;">
+                            <a href="${vData.file}" target="_blank" onclick="event.stopPropagation()" title="View File" style="background: rgba(59, 130, 246, 0.9); color: white; border: none; border-radius: 8px; width: 32px; height: 32px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; text-decoration: none;">👁️</a>
+                            <a href="${vData.file}" download="${fileName}" onclick="event.stopPropagation()" title="Download File" style="background: rgba(16, 185, 129, 0.9); color: white; border: none; border-radius: 8px; width: 32px; height: 32px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; text-decoration: none;">⬇️</a>
+                            <button class="media-btn delete" onclick="event.stopPropagation(); deleteMedia('${plantId}', '${v}', 'file')" title="Delete File" style="background: rgba(220, 38, 38, 0.9); color: white; border: none; border-radius: 8px; width: 32px; height: 32px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px;">🗑️</button>
+                        </div>
+                        <span class="media-type-badge">${fileIcon} File</span>
+                      </div>`;
+                }
+                if (!hasImage && !hasVideo && !hasFile) {
                     mediaContent = `<div class="media-placeholder"><span class="placeholder">${status === 'pending' ? '⏳' : '📷'}</span><p>Click to add media</p></div>`;
                 }
 
@@ -1154,7 +1191,7 @@
                 </div>
                 <div class="version-media-container" style="position: relative;">
                   ${mediaContent}
-                  ${!hasImage && !hasVideo ? `<button class="upload-btn" onclick="openMediaModal('${plantId}', '${v}')" style="position: absolute; bottom: 10px; right: 10px; background: rgba(16, 185, 129, 0.9); color: white; padding: 8px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; z-index: 10; border:none;">📷 Add Media</button>` : ''}
+                  ${!hasImage && !hasVideo && !hasFile ? `<button class="upload-btn" onclick="openMediaModal('${plantId}', '${v}')" style="position: absolute; bottom: 10px; right: 10px; background: rgba(16, 185, 129, 0.9); color: white; padding: 8px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; z-index: 10; border:none;">📎 Add Media</button>` : ''}
                 </div>
                 <div class="version-notes">
                   ${vData.notes || (status === 'pending' ? 'Not yet reached' : 'No notes - click to add')}
@@ -1225,14 +1262,28 @@
 
             const isVideo = file.type.startsWith('video/');
             const isImage = file.type.startsWith('image/');
+            const documentTypes = [
+                'application/pdf',
+                'application/msword',
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                'text/plain',
+                'application/vnd.ms-excel',
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'text/csv',
+                'application/vnd.ms-powerpoint',
+                'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+                'application/zip',
+                'application/x-zip-compressed'
+            ];
+            const isDocument = documentTypes.includes(file.type);
 
             // Validate file type
-            if (!isVideo && !isImage) {
-                showToast('Please select an image or video file', 'error');
+            if (!isVideo && !isImage && !isDocument) {
+                showToast('Please select an image, video, or document file', 'error');
                 return;
             }
 
-            // Validate file size
+            // Validate file size - documents use same limit as images (10MB)
             const maxSize = isVideo ? MAX_VIDEO_SIZE : MAX_IMAGE_SIZE;
             const warning = document.getElementById('fileSizeWarning');
             const warningText = document.getElementById('fileSizeWarningText');
@@ -1268,9 +1319,20 @@
             if (isVideo) {
                 iconEl.textContent = '🎬';
                 iconEl.className = 'file-type-icon video';
-            } else {
+            } else if (isImage) {
                 iconEl.textContent = '🖼️';
                 iconEl.className = 'file-type-icon image';
+            } else {
+                // Document icons based on type
+                const ext = getFileExtension(file.name).toLowerCase();
+                const docIcons = {
+                    'pdf': '📄', 'doc': '📝', 'docx': '📝',
+                    'xls': '📊', 'xlsx': '📊', 'csv': '📊',
+                    'ppt': '📽️', 'pptx': '📽️',
+                    'txt': '📃', 'zip': '📦'
+                };
+                iconEl.textContent = docIcons[ext] || '📁';
+                iconEl.className = 'file-type-icon file';
             }
 
             // Preview
@@ -1284,7 +1346,7 @@
                 video.addEventListener('loadedmetadata', () => {
                     document.getElementById('fileDimensions').innerHTML = `📐 ${video.videoWidth}×${video.videoHeight}`;
                 });
-            } else {
+            } else if (isImage) {
                 preview.innerHTML = `<img src="${objectUrl}" alt="Preview">`;
                 // Get image dimensions
                 const img = new Image();
@@ -1292,6 +1354,21 @@
                     document.getElementById('fileDimensions').innerHTML = `📐 ${img.naturalWidth}×${img.naturalHeight}`;
                 };
                 img.src = objectUrl;
+            } else {
+                // Document preview - show icon and filename
+                const ext = getFileExtension(file.name).toLowerCase();
+                const docIcons = {
+                    'pdf': '📄', 'doc': '📝', 'docx': '📝',
+                    'xls': '📊', 'xlsx': '📊', 'csv': '📊',
+                    'ppt': '📽️', 'pptx': '📽️',
+                    'txt': '📃', 'zip': '📦'
+                };
+                preview.innerHTML = `
+                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 180px; background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);">
+                        <div style="font-size: 64px; margin-bottom: 12px;">${docIcons[ext] || '📁'}</div>
+                        <div style="font-size: 12px; color: #6b7280; text-align: center; padding: 0 16px; word-break: break-word;">${file.name}</div>
+                    </div>`;
+                document.getElementById('fileDimensions').innerHTML = '';
             }
 
             // Update button text with file size
@@ -1444,11 +1521,17 @@
 
                 // Update plant version with media URL
                 const isVideo = selectedFile.type.startsWith('video/');
+                const isImage = selectedFile.type.startsWith('image/');
                 const updateData = { notes };
+
                 if (isVideo) {
                     updateData.video = uploadResult.data.url;
-                } else {
+                } else if (isImage) {
                     updateData.image = uploadResult.data.url;
+                } else {
+                    // Document file
+                    updateData.file = uploadResult.data.url;
+                    updateData.fileName = uploadResult.data.originalName;
                 }
 
                 const updateResponse = await fetch(`${API_BASE}/plants/${plantId}/version/${version}`, {
@@ -1460,10 +1543,59 @@
                 const result = await updateResponse.json();
                 if (result.success) {
                     const uploadTime = ((Date.now() - startTime) / 1000).toFixed(1);
-                    showToast(`${isVideo ? 'Video' : 'Image'} uploaded in ${uploadTime}s!`);
+                    const fileTypeLabel = isVideo ? 'Video' : (isImage ? 'Image' : 'File');
 
-                    // Small delay to show success state
-                    await new Promise(r => setTimeout(r, 500));
+                    // Dynamic success state with preview
+                    progressDiv.classList.add('upload-success');
+                    statusText.textContent = '✓ Upload complete!';
+
+                    // Show success preview in the file preview area
+                    const preview = document.getElementById('filePreview');
+                    const fileUrl = uploadResult.data.url;
+
+                    if (isVideo) {
+                        preview.innerHTML = `
+                            <div style="text-align: center; padding: 16px; background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); border-radius: 8px;">
+                                <div style="font-size: 48px; margin-bottom: 8px;">✅</div>
+                                <div style="font-weight: 600; color: #059669;">Video Uploaded Successfully!</div>
+                                <video src="${fileUrl}" controls style="width: 100%; max-height: 150px; margin-top: 12px; border-radius: 8px;"></video>
+                            </div>`;
+                    } else if (isImage) {
+                        preview.innerHTML = `
+                            <div style="text-align: center; padding: 16px; background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); border-radius: 8px;">
+                                <div style="font-size: 48px; margin-bottom: 8px;">✅</div>
+                                <div style="font-weight: 600; color: #059669;">Image Uploaded Successfully!</div>
+                                <img src="${fileUrl}" style="width: 100%; max-height: 150px; object-fit: cover; margin-top: 12px; border-radius: 8px;">
+                            </div>`;
+                    } else {
+                        const fileName = uploadResult.data.originalName || 'Document';
+                        const fileExt = fileName.split('.').pop().toLowerCase();
+                        const docIcons = {
+                            'pdf': '📄', 'doc': '📝', 'docx': '📝',
+                            'xls': '📊', 'xlsx': '📊', 'csv': '📊',
+                            'ppt': '📽️', 'pptx': '📽️',
+                            'txt': '📃', 'zip': '📦'
+                        };
+                        const fileIcon = docIcons[fileExt] || '📁';
+                        preview.innerHTML = `
+                            <div style="text-align: center; padding: 16px; background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); border-radius: 8px;">
+                                <div style="font-size: 48px; margin-bottom: 8px;">✅</div>
+                                <div style="font-weight: 600; color: #059669;">File Uploaded Successfully!</div>
+                                <div style="margin-top: 12px; padding: 12px; background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                                    <span style="font-size: 24px;">${fileIcon}</span>
+                                    <span style="font-size: 12px; color: #374151;">${fileName}</span>
+                                </div>
+                                <div style="margin-top: 12px; display: flex; gap: 8px; justify-content: center;">
+                                    <a href="${fileUrl}" target="_blank" style="background: #3b82f6; color: white; padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 12px; font-weight: 600;">👁️ View</a>
+                                    <a href="${fileUrl}" download="${fileName}" style="background: #10b981; color: white; padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 12px; font-weight: 600;">⬇️ Download</a>
+                                </div>
+                            </div>`;
+                    }
+
+                    showToast(`${fileTypeLabel} uploaded in ${uploadTime}s!`);
+
+                    // Longer delay to show success state and let user see the preview
+                    await new Promise(r => setTimeout(r, 2000));
 
                     closeModal('mediaModal');
                     resetMediaModal();

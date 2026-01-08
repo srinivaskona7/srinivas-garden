@@ -26,18 +26,31 @@ const upload = multer({
     storage,
     limits: { fileSize: 1024 * 1024 * 1024 }, // 1GB limit for videos
     fileFilter: (req, file, cb) => {
-        // Check file extension
-        const allowedExtensions = /\.(jpeg|jpg|png|gif|webp|mp4|mov|avi|webm)$/i;
+        // Check file extension - images, videos, and documents
+        const allowedExtensions = /\.(jpeg|jpg|png|gif|webp|mp4|mov|avi|webm|pdf|doc|docx|txt|xlsx|xls|csv|pptx|ppt|zip)$/i;
         const hasValidExt = allowedExtensions.test(file.originalname);
 
-        // Check mimetype - allow image/* and video/*
+        // Check mimetype
         const isImage = file.mimetype.startsWith('image/');
         const isVideo = file.mimetype.startsWith('video/');
+        const isDocument = [
+            'application/pdf',
+            'application/msword',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'text/plain',
+            'application/vnd.ms-excel',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'text/csv',
+            'application/vnd.ms-powerpoint',
+            'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+            'application/zip',
+            'application/x-zip-compressed'
+        ].includes(file.mimetype);
 
-        if (hasValidExt && (isImage || isVideo)) {
+        if (hasValidExt && (isImage || isVideo || isDocument)) {
             cb(null, true);
         } else {
-            cb(new Error(`Invalid file type: ${file.mimetype}. Only images and videos are allowed.`));
+            cb(new Error(`Invalid file type: ${file.mimetype}. Allowed: images, videos, PDF, Word, Excel, PowerPoint, text, CSV, ZIP.`));
         }
     }
 });
@@ -69,6 +82,7 @@ router.post('/', handleUpload, async (req, res) => {
 
         const isImage = req.file.mimetype.startsWith('image/');
         const isVideo = req.file.mimetype.startsWith('video/');
+        const isDocument = !isImage && !isVideo;
         let finalSize = req.file.size;
 
         // Optimize image if it's an image
@@ -102,8 +116,9 @@ router.post('/', handleUpload, async (req, res) => {
         }
 
         const fileUrl = `/uploads/${req.file.filename}`;
+        const fileType = isImage ? 'image' : (isVideo ? 'video' : 'file');
 
-        console.log(`✅ File uploaded: ${req.file.originalname} (${(finalSize / 1024 / 1024).toFixed(2)}MB) - ${isVideo ? 'VIDEO' : 'IMAGE'}`);
+        console.log(`✅ File uploaded: ${req.file.originalname} (${(finalSize / 1024 / 1024).toFixed(2)}MB) - ${fileType.toUpperCase()}`);
 
         res.json({
             success: true,
@@ -112,7 +127,7 @@ router.post('/', handleUpload, async (req, res) => {
                 url: fileUrl,
                 filename: req.file.filename,
                 originalName: req.file.originalname,
-                type: isVideo ? 'video' : 'image',
+                type: fileType,
                 mimetype: req.file.mimetype,
                 size: finalSize
             }

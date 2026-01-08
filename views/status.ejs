@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Status | Sri's Garden</title>
+    <link rel="icon" type="image/png" href="/images/favicon.png">
+    <link rel="apple-touch-icon" href="/images/favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .status-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            padding: 40px;
+        }
+
+        .status-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .status-header h1 {
+            color: #064e3b;
+            font-family: 'Playfair Display', serif;
+            margin-bottom: 10px;
+        }
+
+        .status-header p {
+            color: #6b7280;
+        }
+
+        .api-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .api-card {
+            border-radius: 12px;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .api-card.allowed {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border: 2px solid #10b981;
+        }
+
+        .api-card.blocked {
+            background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%);
+            border: 2px solid #ef4444;
+        }
+
+        .api-card h3 {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .api-card.allowed h3 {
+            color: #065f46;
+        }
+
+        .api-card.blocked h3 {
+            color: #991b1b;
+        }
+
+        .api-card .api-url {
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: #6b7280;
+            margin-bottom: 15px;
+        }
+
+        .api-card .policy-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .api-card.allowed .policy-badge {
+            background: #10b981;
+            color: white;
+        }
+
+        .api-card.blocked .policy-badge {
+            background: #ef4444;
+            color: white;
+        }
+
+        .current-quote {
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .current-quote .quote-text {
+            font-size: 1.1rem;
+            font-style: italic;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .api-card.allowed .quote-text {
+            color: #064e3b;
+        }
+
+        .api-card.blocked .quote-text {
+            color: #991b1b;
+        }
+
+        .current-quote .quote-author {
+            font-weight: 600;
+        }
+
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+
+        .status-indicator.online {
+            background: rgba(16, 185, 129, 0.2);
+            color: #065f46;
+        }
+
+        .status-indicator.offline {
+            background: rgba(239, 68, 68, 0.2);
+            color: #991b1b;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .status-dot.green {
+            background: #10b981;
+            box-shadow: 0 0 8px #10b981;
+        }
+
+        .status-dot.red {
+            background: #ef4444;
+            box-shadow: 0 0 8px #ef4444;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .history-section {
+            margin-top: 30px;
+        }
+
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .history-table th,
+        .history-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .history-table th {
+            background: #f9fafb;
+            color: #374151;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .history-table tbody tr:hover {
+            background: #f9fafb;
+        }
+
+        .history-table .status-cell {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .history-table .timestamp {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        .history-table .message {
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .history-table .api-name {
+            font-weight: 500;
+        }
+
+        .refresh-info {
+            text-align: center;
+            color: #9ca3af;
+            font-size: 0.85rem;
+            margin-top: 20px;
+        }
+
+        .breadcrumb {
+            margin-bottom: 20px;
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        .breadcrumb a {
+            color: #10b981;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .legend-dot.allowed {
+            background: #10b981;
+        }
+
+        .legend-dot.blocked {
+            background: #ef4444;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="nav-logo">
+                <span class="logo-icon">🌿</span>
+                <span class="logo-text">Sri's Garden</span>
+            </a>
+            <ul class="nav-menu">
+                <li><a href="/changelog" class="nav-link">📜 Changelog</a></li>
+                <li><a href="/" class="nav-link">Home</a></li>
+                <li><a href="/login" class="nav-link btn btn-sm btn-primary">Login</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main>
+        <div class="container">
+            <div class="status-container">
+                <div class="breadcrumb">
+                    <a href="/">Home</a> > Status
+                </div>
+
+                <div class="status-header">
+                    <h1>🌐 Egress Policy Demo</h1>
+                    <p>Demonstrating Istio egress restrictions with two external APIs</p>
+                </div>
+
+                <div class="legend">
+                    <div class="legend-item">
+                        <span class="legend-dot allowed"></span>
+                        <span>ServiceEntry defined (allowed)</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-dot blocked"></span>
+                        <span>No ServiceEntry (blocked)</span>
+                    </div>
+                </div>
+
+                <div class="api-grid">
+                    <!-- ZenQuotes - Allowed -->
+                    <div class="api-card allowed" id="zenquotesCard">
+                        <h3>✅ ZenQuotes API</h3>
+                        <div class="api-url">zenquotes.io/api/random</div>
+                        <div class="policy-badge">ServiceEntry ✓</div>
+                        <div class="current-quote" id="zenquoteDisplay">
+                            <div class="quote-text">Loading...</div>
+                            <div class="quote-author"></div>
+                        </div>
+                        <div id="zenquoteStatus" class="status-indicator online">
+                            <span class="status-dot green"></span>
+                            <span>Checking...</span>
+                        </div>
+                    </div>
+
+                    <!-- AdviceSlip - Blocked -->
+                    <div class="api-card blocked" id="adviceCard">
+                        <h3>❌ AdviceSlip API</h3>
+                        <div class="api-url">api.adviceslip.com/advice</div>
+                        <div class="policy-badge">No ServiceEntry ✗</div>
+                        <div class="current-quote" id="adviceDisplay">
+                            <div class="quote-text">Loading...</div>
+                            <div class="quote-author"></div>
+                        </div>
+                        <div id="adviceStatus" class="status-indicator offline">
+                            <span class="status-dot red"></span>
+                            <span>Checking...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="history-section">
+                    <h3>📊 API Call History</h3>
+                    <table class="history-table">
+                        <thead>
+                            <tr>
+                                <th>Timestamp</th>
+                                <th>API</th>
+                                <th>Status</th>
+                                <th>Response</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyBody">
+                            <!-- Rows will be added dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="refresh-info">
+                    ⏱️ Auto-refreshing every 5 seconds
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Sri's Garden. <a href="/status" style="color: #10b981;">Made</a> with 💚</p>
+        </div>
+    </footer>
+
+    <script>
+        const historyBody = document.getElementById('historyBody');
+        const maxHistoryRows = 20;
+
+        async function fetchZenQuote() {
+            const timestamp = new Date().toLocaleTimeString();
+            const display = document.getElementById('zenquoteDisplay');
+            const status = document.getElementById('zenquoteStatus');
+
+            try {
+                const response = await fetch('/api/zenquote');
+                const data = await response.json();
+
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                display.innerHTML = `
+                    <div class="quote-text">"${data.quote}"</div>
+                    <div class="quote-author">— ${data.author}</div>
+                `;
+
+                status.className = 'status-indicator online';
+                status.innerHTML = `
+                    <span class="status-dot green"></span>
+                    <span>Online</span>
+                `;
+
+                addHistoryRow(timestamp, 'ZenQuotes', true, data.quote.substring(0, 50) + '...');
+
+            } catch (error) {
+                display.innerHTML = `
+                    <div class="quote-text">⚠️ Connection blocked</div>
+                    <div class="quote-author">${error.message}</div>
+                `;
+
+                status.className = 'status-indicator offline';
+                status.innerHTML = `
+                    <span class="status-dot red"></span>
+                    <span>Blocked</span>
+                `;
+
+                addHistoryRow(timestamp, 'ZenQuotes', false, error.message);
+            }
+        }
+
+        async function fetchAdvice() {
+            const timestamp = new Date().toLocaleTimeString();
+            const display = document.getElementById('adviceDisplay');
+            const status = document.getElementById('adviceStatus');
+
+            try {
+                const response = await fetch('/api/quote');
+                const data = await response.json();
+
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                display.innerHTML = `
+                    <div class="quote-text">"${data.advice}"</div>
+                    <div class="quote-author">#${data.id}</div>
+                `;
+
+                status.className = 'status-indicator online';
+                status.innerHTML = `
+                    <span class="status-dot green"></span>
+                    <span>Online</span>
+                `;
+
+                // Update card styling if unexpectedly online
+                document.getElementById('adviceCard').className = 'api-card allowed';
+
+                addHistoryRow(timestamp, 'AdviceSlip', true, data.advice.substring(0, 50) + '...');
+
+            } catch (error) {
+                display.innerHTML = `
+                    <div class="quote-text">⚠️ Blocked by egress policy</div>
+                    <div class="quote-author">${error.message}</div>
+                `;
+
+                status.className = 'status-indicator offline';
+                status.innerHTML = `
+                    <span class="status-dot red"></span>
+                    <span>Blocked</span>
+                `;
+
+                addHistoryRow(timestamp, 'AdviceSlip', false, error.message);
+            }
+        }
+
+        function addHistoryRow(timestamp, apiName, isOnline, message) {
+            const row = document.createElement('tr');
+            const statusClass = isOnline ? 'green' : 'red';
+            const statusText = isOnline ? 'OK' : 'Blocked';
+
+            row.innerHTML = `
+                <td class="timestamp">${timestamp}</td>
+                <td class="api-name">${apiName}</td>
+                <td>
+                    <div class="status-cell">
+                        <span class="status-dot ${statusClass}"></span>
+                        <span>${statusText}</span>
+                    </div>
+                </td>
+                <td class="message" title="${message}">${message}</td>
+            `;
+
+            if (historyBody.firstChild) {
+                historyBody.insertBefore(row, historyBody.firstChild);
+            } else {
+                historyBody.appendChild(row);
+            }
+
+            while (historyBody.children.length > maxHistoryRows) {
+                historyBody.removeChild(historyBody.lastChild);
+            }
+        }
+
+        // Initial fetch
+        fetchZenQuote();
+        fetchAdvice();
+
+        // Fetch every 5 seconds
+        setInterval(() => {
+            fetchZenQuote();
+            fetchAdvice();
+        }, 5000);
+    </script>
+</body>
+
+</html>

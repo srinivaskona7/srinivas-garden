@@ -1,6 +1,6 @@
 {
   "name": "beautiful-garden",
-  "version": "1.0.20",
+  "version": "1.0.28",
   "description": "A beautiful garden and plant management application",
   "main": "server.js",
   "scripts": {

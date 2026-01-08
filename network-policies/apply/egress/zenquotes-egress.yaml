@@ -1,0 +1,44 @@
+# Istio Cluster-Wide Egress Policy
+# Restricts ALL pods in the mesh to only access allowed external services
+#
+# Apply: kubectl apply -f network-policies/apply/egress/ --kubeconfig=kubeconfig-trail.yaml
+# Delete: kubectl delete -f network-policies/apply/egress/ --kubeconfig=kubeconfig-trail.yaml
+
+---
+# ServiceEntry: Register zenquotes.io as a known external service (cluster-wide)
+apiVersion: networking.istio.io/v1
+kind: ServiceEntry
+metadata:
+  name: zenquotes-external
+  namespace: istio-system
+  labels:
+    managed-by: network-policies
+spec:
+  hosts:
+    - zenquotes.io
+  ports:
+    - number: 443
+      name: https
+      protocol: HTTPS
+  location: MESH_EXTERNAL
+  resolution: DNS
+  exportTo:
+    - "*"  # Export to all namespaces (cluster-wide)
+
+---
+# Sidecar: Cluster-wide egress restriction
+# Applied to istio-system without workloadSelector = applies to ALL sidecars
+apiVersion: networking.istio.io/v1
+kind: Sidecar
+metadata:
+  name: cluster-egress-policy
+  namespace: istio-system
+  labels:
+    managed-by: network-policies
+spec:
+  # No workloadSelector = applies to all workloads in the mesh
+  outboundTrafficPolicy:
+    mode: REGISTRY_ONLY
+  egress:
+    - hosts:
+        - "*/*"  # All internal services (includes kube-system, istio-system, etc.)

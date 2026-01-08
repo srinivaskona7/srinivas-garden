@@ -158,6 +158,122 @@ app.get('/changelog', (req, res) => {
   }
 });
 
+// Status page - displays quote API status
+app.get('/status', (req, res) => {
+  res.render('status', { title: 'API Status' });
+});
+
+// Advice API proxy - to avoid CORS issues with adviceslip.com
+app.get('/api/quote', async (req, res) => {
+  try {
+    const https = require('https');
+
+    const fetchAdvice = () => {
+      return new Promise((resolve, reject) => {
+        const options = {
+          hostname: 'api.adviceslip.com',
+          port: 443,
+          path: '/advice',
+          method: 'GET',
+          timeout: 5000
+        };
+
+        const request = https.request(options, (response) => {
+          let data = '';
+          response.on('data', chunk => data += chunk);
+          response.on('end', () => {
+            try {
+              const parsed = JSON.parse(data);
+              // Transform to match expected format: { advice: "...", id: ... }
+              resolve({
+                advice: parsed.slip?.advice || 'No advice available',
+                id: parsed.slip?.id || null
+              });
+            } catch (e) {
+              reject(new Error('Failed to parse response'));
+            }
+          });
+        });
+
+        request.on('error', reject);
+        request.on('timeout', () => {
+          request.destroy();
+          reject(new Error('Request timeout'));
+        });
+
+        request.end();
+      });
+    };
+
+    const advice = await fetchAdvice();
+    res.json(advice);
+
+  } catch (error) {
+    console.error('Advice API error:', error.message);
+    res.status(503).json({
+      error: error.message || 'Network error - API not reachable',
+      advice: null,
+      id: null
+    });
+  }
+});
+
+// ZenQuotes API proxy - allowed by egress policy
+app.get('/api/zenquote', async (req, res) => {
+  try {
+    const https = require('https');
+
+    const fetchZenQuote = () => {
+      return new Promise((resolve, reject) => {
+        const options = {
+          hostname: 'zenquotes.io',
+          port: 443,
+          path: '/api/random',
+          method: 'GET',
+          timeout: 5000
+        };
+
+        const request = https.request(options, (response) => {
+          let data = '';
+          response.on('data', chunk => data += chunk);
+          response.on('end', () => {
+            try {
+              const parsed = JSON.parse(data);
+              // ZenQuotes returns array: [{ q: "quote", a: "author" }]
+              resolve({
+                quote: parsed[0]?.q || 'No quote available',
+                author: parsed[0]?.a || 'Unknown'
+              });
+            } catch (e) {
+              reject(new Error('Failed to parse response'));
+            }
+          });
+        });
+
+        request.on('error', reject);
+        request.on('timeout', () => {
+          request.destroy();
+          reject(new Error('Request timeout'));
+        });
+
+        request.end();
+      });
+    };
+
+    const quote = await fetchZenQuote();
+    res.json(quote);
+
+  } catch (error) {
+    console.error('ZenQuotes API error:', error.message);
+    res.status(503).json({
+      error: error.message || 'Network error - API not reachable',
+      quote: null,
+      author: null
+    });
+  }
+});
+
+
 // Error handling
 app.use((err, req, res, next) => {
   console.error(err.stack);

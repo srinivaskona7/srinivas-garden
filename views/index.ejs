@@ -529,7 +529,7 @@
                     </div>
                   </div>
                   <% const mediaThumbs=['v1', 'v2' , 'v3' , 'v4' ].filter(v=> plant.versions && plant.versions[v] &&
-                    (plant.versions[v].image || plant.versions[v].video));
+                    (plant.versions[v].image || plant.versions[v].video || plant.versions[v].file));
                     %>
                     <% if (mediaThumbs.length> 0) { %>
                       <div class="version-thumbnails">
@@ -537,12 +537,15 @@
                           <div class="version-thumb" title="<%= v.toUpperCase() %> media">
                             <% if (plant.versions[v].image) { %>
                               <img src="<%= plant.versions[v].image %>" alt="<%= v %>">
-                              <% } else { %>
+                              <% } else if (plant.versions[v].video) { %>
                                 <span class="video-indicator">🎬</span>
-                                <% } %>
-                                  <span class="thumb-label">
-                                    <%= v.toUpperCase() %>
-                                  </span>
+                                <% } else if (plant.versions[v].file) { %>
+                                  <span class="video-indicator"
+                                    style="background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%);">📄</span>
+                                  <% } %>
+                                    <span class="thumb-label">
+                                      <%= v.toUpperCase() %>
+                                    </span>
                           </div>
                           <% }); %>
                       </div>
@@ -597,7 +600,7 @@
 
   <footer class="footer">
     <div class="container">
-      <p>&copy; 2024 Sri's Garden. Made with 💚</p>
+      <p>&copy; 2024 Sri's Garden. <a href="/status" style="color: #10b981; text-decoration: none;">Made</a> with 💚</p>
     </div>
   </footer>
 
@@ -662,9 +665,10 @@
         const status = idx < currentIdx ? 'done' : (idx === currentIdx ? 'current' : 'pending');
         const hasVideo = vData.video;
         const hasImage = vData.image;
+        const hasFile = vData.file;
 
         let mediaContent = '';
-        // Show both if available, similar to admin view
+        // Show all media types if available
         if (hasImage) {
           mediaContent += `
                  <div class="media-item" style="position: relative;">
@@ -690,7 +694,35 @@
                    <span class="media-type-badge">🎬 Video</span>
                  </div>`;
         }
-        if (!hasImage && !hasVideo) {
+        if (hasFile) {
+          const fileName = vData.fileName || 'Document';
+          const fileExt = fileName.split('.').pop().toLowerCase();
+          const isPdf = fileExt === 'pdf';
+          const docIcons = {
+            'pdf': '📄', 'doc': '📝', 'docx': '📝',
+            'xls': '📊', 'xlsx': '📊', 'csv': '📊',
+            'ppt': '📽️', 'pptx': '📽️',
+            'txt': '📃', 'zip': '📦'
+          };
+          const fileIcon = docIcons[fileExt] || '📁';
+
+          mediaContent += `
+                 <div class="media-item" style="position: relative;">
+                   ${isPdf ?
+              `<iframe src="${vData.file}" style="width: 100%; height: 200px; border: none; border-radius: 8px;" title="${fileName}"></iframe>` :
+              `<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 150px; background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%); border-radius: 8px;">
+                           <div style="font-size: 48px; margin-bottom: 8px;">${fileIcon}</div>
+                           <div style="font-size: 12px; color: #374151; font-weight: 500; text-align: center; padding: 0 16px; word-break: break-word;">${fileName}</div>
+                       </div>`
+            }
+                   <div style="position: absolute; top: 8px; right: 8px; display: flex; gap: 8px; z-index: 20;">
+                       <a href="${vData.file}" target="_blank" onclick="event.stopPropagation()" title="View File" style="background: rgba(59, 130, 246, 0.9); color: white; border: none; border-radius: 8px; width: 32px; height: 32px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; text-decoration: none;">👁️</a>
+                       <a href="${vData.file}" download="${fileName}" onclick="event.stopPropagation()" title="Download File" style="background: rgba(16, 185, 129, 0.9); color: white; border: none; border-radius: 8px; width: 32px; height: 32px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; text-decoration: none;">⬇️</a>
+                   </div>
+                   <span class="media-type-badge">${fileIcon} File</span>
+                 </div>`;
+        }
+        if (!hasImage && !hasVideo && !hasFile) {
           mediaContent = `<div class="media-placeholder"><span class="placeholder">${status === 'pending' ? '⏳' : '📷'}</span><p>No media added yet</p></div>`;
         }
 

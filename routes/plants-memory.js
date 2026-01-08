@@ -114,8 +114,8 @@ router.delete('/:id/version/:version/media/:mediaType', async (req, res) => {
             return res.status(400).json({ success: false, message: 'Invalid version' });
         }
 
-        if (!['image', 'video'].includes(mediaType)) {
-            return res.status(400).json({ success: false, message: 'Invalid media type. Use image or video' });
+        if (!['image', 'video', 'file'].includes(mediaType)) {
+            return res.status(400).json({ success: false, message: 'Invalid media type. Use image, video, or file' });
         }
 
         // Remove the media from version

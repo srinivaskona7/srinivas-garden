@@ -1,0 +1,26 @@
+# Istio AuthorizationPolicy at Gateway Level
+# Restricts ALL ingress traffic to the cluster to allowed IPs only
+#
+# IMPORTANT: Update the IP when your IP changes
+# Find your IP: curl ifconfig.me
+
+---
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: garden-allow-my-ip
+  namespace: istio-system
+  labels:
+    managed-by: network-policies
+spec:
+  selector:
+    matchLabels:
+      app: istio-ingressgateway
+  action: ALLOW
+  rules:
+    # Allow requests from allowed IP only - applies to ALL hosts
+    - from:
+        - source:
+            remoteIpBlocks:
+              - "163.223.48.163/32"
+              - "103.99.8.235/32"
