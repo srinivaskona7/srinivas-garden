@@ -732,6 +732,135 @@
             background: #fee2e2;
             color: #dc2626;
         }
+
+        /* Kyma Terminal Styles */
+        .main-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 12px;
+        }
+
+        .main-tab {
+            padding: 12px 24px;
+            border: none;
+            background: white;
+            border-radius: 12px 12px 0 0;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid #e5e7eb;
+            border-bottom: none;
+        }
+
+        .main-tab:hover {
+            background: #f3f4f6;
+        }
+
+        .main-tab.active {
+            background: linear-gradient(135deg, #065f46 0%, #10b981 100%);
+            color: white;
+            border-color: #10b981;
+        }
+
+        .main-tab.kyma {
+            background: white;
+        }
+
+        .main-tab.kyma.active {
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+            border-color: #3b82f6;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .terminal-container {
+            background: #0d1117;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .terminal-header {
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+            color: white;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .terminal-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+        }
+
+        .terminal-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10b981;
+            animation: pulse 2s infinite;
+        }
+
+        .status-dot.disconnected {
+            background: #ef4444;
+            animation: none;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        #terminal {
+            height: 500px;
+            padding: 12px;
+        }
+
+        .terminal-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .terminal-btn {
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: none;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .terminal-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
     </style>
 </head>
 
@@ -764,20 +893,63 @@
                 <p>Click on any plant to view and add photos/videos</p>
             </div>
 
-            <div class="tab-header">
-                <h2>My Plants</h2>
-                <button class="btn btn-primary" onclick="showAddPlantModal()">➕ Add Plant</button>
+            <!-- Main Section Tabs -->
+            <div class="main-tabs">
+                <button class="main-tab active" data-section="plants">🌱 Plants</button>
+                <button class="main-tab kyma" data-section="kyma">☸️ Kyma</button>
             </div>
 
-            <div class="filter-tabs">
-                <button class="filter-tab active" data-filter="all">All Plants</button>
-                <button class="filter-tab" data-filter="v1">🌱 V1 - Soil Ready</button>
-                <button class="filter-tab" data-filter="v2">🌿 V2 - Sprouts</button>
-                <button class="filter-tab" data-filter="v3">🪴 V3 - Growing</button>
-                <button class="filter-tab" data-filter="v4">🥬 V4 - Harvest</button>
+            <!-- Plants Section -->
+            <div id="plants-section" class="tab-content active">
+                <div class="tab-header">
+                    <h2>My Plants</h2>
+                    <button class="btn btn-primary" onclick="showAddPlantModal()">➕ Add Plant</button>
+                </div>
+
+                <div class="filter-tabs">
+                    <button class="filter-tab active" data-filter="all">All Plants</button>
+                    <button class="filter-tab" data-filter="v1">🌱 V1 - Soil Ready</button>
+                    <button class="filter-tab" data-filter="v2">🌿 V2 - Sprouts</button>
+                    <button class="filter-tab" data-filter="v3">🪴 V3 - Growing</button>
+                    <button class="filter-tab" data-filter="v4">🥬 V4 - Harvest</button>
+                </div>
+
+                <div class="admin-grid" id="plantsGrid"></div>
             </div>
 
-            <div class="admin-grid" id="plantsGrid"></div>
+            <!-- Kyma Terminal Section -->
+            <div id="kyma-section" class="tab-content">
+                <div class="tab-header">
+                    <h2>☸️ Kyma Cluster Terminal</h2>
+                </div>
+                <div class="terminal-container">
+                    <div class="terminal-header">
+                        <div class="terminal-title">
+                            <span>🖥️</span>
+                            <span>kubectl / helm / shell</span>
+                        </div>
+                        <div class="terminal-status">
+                            <span class="status-dot" id="terminalStatusDot"></span>
+                            <span id="terminalStatusText">Connecting...</span>
+                        </div>
+                        <div class="terminal-actions">
+                            <button class="terminal-btn" onclick="clearTerminal()">🗑️ Clear</button>
+                            <button class="terminal-btn" onclick="reconnectTerminal()">🔄 Reconnect</button>
+                        </div>
+                    </div>
+                    <div id="terminal"></div>
+                </div>
+                <div style="margin-top: 16px; padding: 16px; background: #f3f4f6; border-radius: 12px;">
+                    <h4 style="margin-bottom: 8px;">💡 Quick Commands</h4>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                        <button class="btn btn-sm" onclick="sendCommand('kubectl get nodes')">👥 Get Nodes</button>
+                        <button class="btn btn-sm" onclick="sendCommand('kubectl get pods -A')">🪣 Get All Pods</button>
+                        <button class="btn btn-sm" onclick="sendCommand('kubectl get svc -A')">🌐 Get Services</button>
+                        <button class="btn btn-sm" onclick="sendCommand('helm list -A')">☸️ Helm Releases</button>
+                        <button class="btn btn-sm" onclick="sendCommand('kubectl top nodes')">📊 Node Resources</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </main>
 
@@ -1749,6 +1921,175 @@
 
         document.addEventListener('DOMContentLoaded', updateDiskSpace);
         updateDiskSpace();
+    </script>
+
+    <!-- xterm.js for terminal -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@5.3.0/css/xterm.css">
+    <script src="https://cdn.jsdelivr.net/npm/xterm@5.3.0/lib/xterm.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.8.0/lib/xterm-addon-fit.min.js"></script>
+    <script>
+        // Terminal state
+        let terminal = null;
+        let terminalSocket = null;
+        let fitAddon = null;
+
+        // Initialize main section tabs
+        document.querySelectorAll('.main-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Update tab active state
+                document.querySelectorAll('.main-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                // Show corresponding section
+                const section = tab.dataset.section;
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                document.getElementById(`${section}-section`).classList.add('active');
+
+                // Initialize terminal when Kyma tab is first opened
+                if (section === 'kyma' && !terminal) {
+                    initTerminal();
+                }
+            });
+        });
+
+        // Initialize xterm.js terminal
+        function initTerminal() {
+            const terminalEl = document.getElementById('terminal');
+            if (!terminalEl) return;
+
+            terminal = new Terminal({
+                fontSize: 14,
+                fontFamily: 'Menlo, Monaco, "Courier New", monospace',
+                theme: {
+                    background: '#0d1117',
+                    foreground: '#c9d1d9',
+                    cursor: '#58a6ff',
+                    cursorAccent: '#0d1117',
+                    selectionBackground: '#264f78',
+                    black: '#484f58',
+                    red: '#ff7b72',
+                    green: '#3fb950',
+                    yellow: '#d29922',
+                    blue: '#58a6ff',
+                    magenta: '#bc8cff',
+                    cyan: '#39c5cf',
+                    white: '#b1bac4',
+                    brightBlack: '#6e7681',
+                    brightRed: '#ffa198',
+                    brightGreen: '#56d364',
+                    brightYellow: '#e3b341',
+                    brightBlue: '#79c0ff',
+                    brightMagenta: '#d2a8ff',
+                    brightCyan: '#56d4dd',
+                    brightWhite: '#f0f6fc'
+                },
+                cursorBlink: true,
+                scrollback: 10000
+            });
+
+            fitAddon = new FitAddon.FitAddon();
+            terminal.loadAddon(fitAddon);
+            terminal.open(terminalEl);
+            fitAddon.fit();
+
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                if (fitAddon) fitAddon.fit();
+                if (terminalSocket && terminalSocket.readyState === WebSocket.OPEN) {
+                    terminalSocket.send(`resize:${terminal.cols}:${terminal.rows}`);
+                }
+            });
+
+            // Connect WebSocket
+            connectTerminal();
+
+            // Send terminal input to WebSocket
+            terminal.onData(data => {
+                if (terminalSocket && terminalSocket.readyState === WebSocket.OPEN) {
+                    terminalSocket.send(data);
+                }
+            });
+        }
+
+        // Connect to terminal WebSocket
+        function connectTerminal() {
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsUrl = `${protocol}//${window.location.host}/terminal`;
+
+            updateTerminalStatus('connecting');
+
+            terminalSocket = new WebSocket(wsUrl);
+
+            terminalSocket.onopen = () => {
+                console.log('🖥️ Terminal connected');
+                updateTerminalStatus('connected');
+                // Send initial resize
+                if (terminal) {
+                    terminalSocket.send(`resize:${terminal.cols}:${terminal.rows}`);
+                }
+            };
+
+            terminalSocket.onmessage = (event) => {
+                if (terminal) {
+                    terminal.write(event.data);
+                }
+            };
+
+            terminalSocket.onclose = () => {
+                console.log('🖥️ Terminal disconnected');
+                updateTerminalStatus('disconnected');
+            };
+
+            terminalSocket.onerror = (err) => {
+                console.error('🖥️ Terminal error:', err);
+                updateTerminalStatus('disconnected');
+            };
+        }
+
+        // Update terminal status indicator
+        function updateTerminalStatus(status) {
+            const dot = document.getElementById('terminalStatusDot');
+            const text = document.getElementById('terminalStatusText');
+            if (!dot || !text) return;
+
+            switch (status) {
+                case 'connecting':
+                    dot.className = 'status-dot';
+                    dot.style.background = '#f59e0b';
+                    text.textContent = 'Connecting...';
+                    break;
+                case 'connected':
+                    dot.className = 'status-dot';
+                    dot.style.background = '#10b981';
+                    text.textContent = 'Connected';
+                    break;
+                case 'disconnected':
+                    dot.className = 'status-dot disconnected';
+                    dot.style.background = '#ef4444';
+                    text.textContent = 'Disconnected';
+                    break;
+            }
+        }
+
+        // Clear terminal
+        function clearTerminal() {
+            if (terminal) terminal.clear();
+        }
+
+        // Reconnect terminal
+        function reconnectTerminal() {
+            if (terminalSocket) {
+                terminalSocket.close();
+            }
+            setTimeout(connectTerminal, 500);
+        }
+
+        // Send command to terminal
+        function sendCommand(cmd) {
+            if (terminalSocket && terminalSocket.readyState === WebSocket.OPEN) {
+                terminalSocket.send(cmd + '\n');
+            }
+        }
     </script>
 </body>
 

@@ -1,0 +1,26 @@
+# Allow internal traffic from beautiful-garden app to Jaeger service
+# Required for the Express proxy to forward requests to Jaeger
+apiVersion: security.istio.io/v1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-jaeger-access
+  namespace: garden
+  labels:
+    managed-by: network-policies
+spec:
+  selector:
+    matchLabels:
+      app: jaeger
+  action: ALLOW
+  rules:
+    # Allow traffic from any source within the cluster to Jaeger
+    # Since Jaeger has sidecar disabled, this allows mesh traffic
+    - from:
+        - source:
+            namespaces:
+              - garden
+    # Also allow from ingress for direct access attempts
+    - from:
+        - source:
+            principals:
+              - cluster.local/ns/istio-system/sa/istio-ingressgateway-service-account

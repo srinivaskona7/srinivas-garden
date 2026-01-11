@@ -1,0 +1,28 @@
+# VirtualService patch to enable WebSocket for /terminal path
+# This adds specific routing for WebSocket connections
+
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: beautiful-garden-terminal
+  namespace: garden
+spec:
+  gateways:
+    - garden/beautiful-garden-gateway
+  hosts:
+    - garden.srinivaskona.life
+  http:
+    # WebSocket route for terminal - needs higher timeout and no method restriction
+    - match:
+        - uri:
+            prefix: /terminal
+      route:
+        - destination:
+            host: beautiful-garden.garden.svc.cluster.local
+            port:
+              number: 80
+      timeout: 3600s  # 1 hour for long-running terminal sessions
+      headers:
+        request:
+          set:
+            x-forwarded-host: garden.srinivaskona.life

@@ -4,7 +4,7 @@
 # Application image configuration
 image:
   repository: sriniv7654/garden
-  tag: v1.0.22
+  tag: "kubectl"
   pullPolicy: IfNotPresent
 
 # Image pull secrets (if using private registry)

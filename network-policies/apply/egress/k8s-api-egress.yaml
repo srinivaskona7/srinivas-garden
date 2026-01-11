@@ -1,0 +1,24 @@
+# Kubernetes API ServiceEntry for terminal access
+# Allows the web terminal to access the Kubernetes API server
+#
+# Apply: kubectl apply -f network-policies/apply/egress/k8s-api-egress.yaml --kubeconfig=kubeconfig-trail.yaml
+
+---
+apiVersion: networking.istio.io/v1
+kind: ServiceEntry
+metadata:
+  name: kubernetes-api-external
+  namespace: istio-system
+  labels:
+    managed-by: network-policies
+spec:
+  hosts:
+    - api.c-47380fd.kyma.ondemand.com
+  ports:
+    - number: 443
+      name: https
+      protocol: TLS
+  location: MESH_EXTERNAL
+  resolution: DNS
+  exportTo:
+    - "*"  # Export to all namespaces (cluster-wide for terminal)

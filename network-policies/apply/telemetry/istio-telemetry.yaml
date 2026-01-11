@@ -1,0 +1,44 @@
+# Istio Telemetry Configuration
+# Enables distributed tracing for all services in the garden namespace
+# Sends traces to Jaeger collector via OTLP
+
+apiVersion: telemetry.istio.io/v1
+kind: Telemetry
+metadata:
+  name: garden-tracing
+  namespace: garden
+spec:
+  # Apply to all workloads in the namespace
+  tracing:
+    - providers:
+        - name: "jaeger-otlp"
+      randomSamplingPercentage: 100.0  # Sample all traces (adjust for production)
+      customTags:
+        environment:
+          literal:
+            value: "production"
+
+---
+# Extension Provider for Jaeger OTLP
+# This is applied at the mesh level (istio-system)
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: jaeger-extension-provider
+  namespace: garden
+  labels:
+    app: jaeger
+data:
+  readme: |
+    This extension provider should be added to the Istio mesh config.
+    
+    Add the following to your Istio ConfigMap (istio-system/istio):
+    
+    extensionProviders:
+      - name: jaeger-otlp
+        opentelemetry:
+          service: jaeger-collector.garden.svc.cluster.local
+          port: 4317
+    
+    For Kyma, this may need to be configured differently.
+    The application-level OpenTelemetry SDK will still send traces directly.

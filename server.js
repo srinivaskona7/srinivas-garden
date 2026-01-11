@@ -1,5 +1,10 @@
+// Initialize OpenTelemetry tracing (must be first!)
+require('./tracing');
+
 require('dotenv').config();
 const express = require('express');
+const http = require('http');
+const WebSocket = require('ws');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
@@ -8,6 +13,8 @@ const fs = require('fs');
 const marked = require('marked');
 
 const app = express();
+const server = http.createServer(app);
+const wss = new WebSocket.Server({ noServer: true });
 const PORT = process.env.PORT || 3000;
 
 // Use in-memory database with JSON persistence
@@ -22,6 +29,7 @@ const plantRoutes = require('./routes/plants-memory');
 const gardenRoutes = require('./routes/gardens-memory');
 const healthRoutes = require('./routes/health');
 const uploadRoutes = require('./routes/upload');
+const { initTerminal, cleanupTerminals } = require('./routes/terminal');
 
 // Middleware
 app.use(helmet({
@@ -46,6 +54,30 @@ app.use('/api/layouts', layoutRoutes);
 app.use('/api/plants', plantRoutes);
 app.use('/api/gardens', gardenRoutes);
 app.use('/api/upload', uploadRoutes);
+
+// Jaeger Dashboard Proxy - forwards /jaeger/* to Jaeger service
+const { createProxyMiddleware } = require('http-proxy-middleware');
+const jaegerTarget = process.env.JAEGER_URL || 'http://jaeger-query.garden.svc.cluster.local:16686';
+app.use('/jaeger', createProxyMiddleware({
+  target: jaegerTarget,
+  changeOrigin: true,
+  // Preserve /jaeger prefix: when Express strips the mount path, we need to add it back
+  // prependPath ensures the original URL path is forwarded to Jaeger
+  pathRewrite: (path, req) => {
+    // Express strips '/jaeger' from req.url, so we need to prepend it back
+    const fullPath = '/jaeger' + path;
+    console.log(`📊 Jaeger proxy: ${req.method} ${path} -> ${fullPath}`);
+    return fullPath;
+    return fullPath;
+  },
+  ws: false,  // Disable middleware WS handling to prevent global listener conflict with Terminal
+  onError: (err, req, res) => {
+    console.error('Jaeger proxy error:', err);
+    res.status(502).json({ error: 'Jaeger dashboard not available' });
+  }
+}));
+console.log(`📊 Jaeger dashboard proxy: /jaeger -> ${jaegerTarget}`);
+
 app.use('/health', healthRoutes);
 
 // System Routes
@@ -286,7 +318,44 @@ app.use((req, res) => {
 
 // Start server only if this file is run directly (not imported for tests)
 if (require.main === module) {
-  app.listen(PORT, () => {
+  // Initialize WebSocket terminal handler
+  initTerminal(wss);
+
+  // Create a separate proxy server for Jaeger WebSocket upgrades
+  const httpProxy = require('http-proxy');
+  const jaegerWsProxy = httpProxy.createProxyServer({
+    target: process.env.JAEGER_URL || 'http://jaeger-query.garden.svc.cluster.local:16686',
+    ws: true
+  });
+
+  // Handle manual WebSocket upgrade
+  server.on('upgrade', (request, socket, head) => {
+    // 1. Terminal WebSocket
+    if (request.url === '/terminal') {
+      wss.handleUpgrade(request, socket, head, (ws) => {
+        wss.emit('connection', ws, request);
+      });
+    }
+    // 2. Jaeger WebSocket (e.g. /jaeger/api/traces/live)
+    // Jaeger is configured with --query.base-path=/jaeger, so it expects /jaeger prefix
+    else if (request.url.startsWith('/jaeger')) {
+      console.log(`📊 Upgrading Jaeger WebSocket: ${request.url}`);
+      jaegerWsProxy.ws(request, socket, head);
+    }
+    // 3. Unknown -> Destroy
+    else {
+      socket.destroy();
+    }
+  });
+
+  // Graceful shutdown
+  process.on('SIGTERM', () => {
+    console.log('\n🛑 Shutting down gracefully...');
+    cleanupTerminals();
+    server.close(() => process.exit(0));
+  });
+
+  server.listen(PORT, () => {
     console.log('');
     console.log('╔════════════════════════════════════════════════════════════╗');
     console.log("║         🌿 Sri's Garden App is Running! 🌿             ║");
@@ -294,6 +363,7 @@ if (require.main === module) {
     console.log('');
     console.log(`   🌐 Open http://localhost:${PORT} in your browser`);
     console.log(`   🔐 Login: username=user, password=admin764`);
+    console.log(`   🖥️  Terminal WebSocket: ws://localhost:${PORT}/terminal`);
     console.log('');
   });
 }

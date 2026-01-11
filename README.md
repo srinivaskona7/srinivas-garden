@@ -68,7 +68,7 @@ docker-compose -f docker-compose.dev.yml up
 
 ### Build the image
 ```bash
-docker build -t sriniv7654/garden:v1.0.0 .
+docker build -t sriniv7654/garden:kubectl .
 ```
 
 ### Run locally with Docker
@@ -81,14 +81,22 @@ docker run -d \
   --name beautiful-garden \
   -p 3000:3000 \
   -e MONGODB_URI=mongodb://host.docker.internal:27017/beautiful-garden \
-  sriniv7654/garden:v1.0.0
+  sriniv7654/garden:kubectl
 ```
 
 ### Push to Docker Hub
 ```bash
 docker login
-docker push sriniv7654/garden:v1.0.0
+docker push sriniv7654/garden:kubectl
 ```
+
+### Supported Images
+
+| Image Tag | Features & Use Case |
+|-----------|---------------------|
+| `sriniv7654/garden:kubectl` | **Admin / Debug Mode**<br>• Pre-installed `kubectl` and `helm`<br>• Full Terminal access via Web UI<br>• Useful for cluster management directly from the app |
+| `sriniv7654/garden:latest` | **Production Ready**<br>• Standard application release<br>• Optimized for performance<br>• Includes all core features (Plants, Gardens, Auth) |
+| `sriniv7654/garden:1.0.x` | **Stable Version**<br>• Specific version snapshots<br>• Use for reproducible deployments |
 
 ## Kubernetes Deployment
 

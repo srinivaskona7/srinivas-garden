@@ -33,5 +33,10 @@ coverage/
 backups/*.tar.gz
 
 # Temp files
-*.tmp
 *.temp
+*.tmp
+
+# Secrets and Configs
+kubeconfig*.yaml
+*secret.yaml
+kyma-cluster/

@@ -12,8 +12,8 @@
     "test:browser:headed": "playwright test --headed",
     "test:all": "npm run test && npm run test:browser",
     "start:docker": "docker build -t garden-local . && docker run -p 3000:3000 --rm garden-local",
-    "build:docker": "docker build --platform linux/amd64 -t sriniv7654/garden:latest .",
-    "push:docker": "docker push sriniv7654/garden:latest",
+    "build:docker": "docker build --platform linux/amd64 -t sriniv7654/garden:kubectl .",
+    "push:docker": "docker push sriniv7654/garden:kubectl",
     "deploy:k8s": "helm upgrade --install beautiful-garden ./helm/beautiful-garden --namespace garden --create-namespace --kubeconfig kubeconfig-trail.yaml",
     "release": "./scripts/release.sh"
   },
@@ -27,16 +27,26 @@
   "author": "Beautiful Garden Team",
   "license": "MIT",
   "dependencies": {
+    "@opentelemetry/api": "^1.9.0",
+    "@opentelemetry/auto-instrumentations-node": "^0.55.0",
+    "@opentelemetry/exporter-trace-otlp-http": "^0.57.0",
+    "@opentelemetry/resources": "^1.30.0",
+    "@opentelemetry/sdk-node": "^0.57.0",
+    "@opentelemetry/semantic-conventions": "^1.28.0",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "ejs": "^3.1.9",
     "express": "^4.18.2",
     "helmet": "^7.1.0",
+    "http-proxy": "^1.18.1",
+    "http-proxy-middleware": "^3.0.0",
     "marked": "^4.3.0",
     "mongoose": "^8.0.3",
     "morgan": "^1.10.0",
     "multer": "^2.0.2",
-    "sharp": "^0.34.5"
+    "node-pty": "^1.1.0",
+    "sharp": "^0.34.5",
+    "ws": "^8.19.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.57.0",
