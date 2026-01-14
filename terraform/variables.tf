@@ -3,22 +3,9 @@ variable "globalaccount" {
   type        = string
 }
 
-variable "region" {
-  description = "The region where the subaccount shall be created."
+variable "existing_subaccount_id" {
+  description = "The ID of the existing subaccount to use for Kyma."
   type        = string
-  default     = "us10"
-}
-
-variable "subaccount_name" {
-  description = "The name of the subaccount."
-  type        = string
-  default     = "my-kyma-subaccount"
-}
-
-variable "subaccount_subdomain" {
-  description = "The subdomain of the subaccount."
-  type        = string
-  default     = "my-kyma-subaccount-sd"
 }
 
 variable "kyma_instance_name" {
@@ -28,7 +15,8 @@ variable "kyma_instance_name" {
 }
 
 variable "kyma_plan" {
-    description = "The plan for Kyma environment (e.g., free, azure, aws)."
-    type        = string
-    default     = "free"
+  description = "The plan for Kyma environment (e.g., free, azure, aws, trial)."
+  type        = string
+  default     = "trial"
 }
+
